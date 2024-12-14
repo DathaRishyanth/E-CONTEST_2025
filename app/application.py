@@ -3,6 +3,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField
 from wtforms.validators import InputRequired, Email, Length, EqualTo
 from flask_session import Session
+from sqlalchemy import text
 import os
 #from app.class_orm import db,User,Result,Submission
 import time, pytz
@@ -31,7 +32,7 @@ ENV = 'dev'
 if ENV == 'dev' :
 	app.debug = True
 	#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
-	app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Sai@2005@localhost:5432/saiganesh'
+	app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:root@localhost:5432/e-contest'
 else :
 	app.debug = False
 	app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://mszgdrmqiddjvp:1a9d8910173e936e5392a3e9593398505f81181e523cd0ddb5a2d0d9e340f84f@ec2-23-20-224-166.compute-1.amazonaws.com:5432/d7ljggvkk2q49e'
@@ -96,7 +97,7 @@ class Submission(db.Model) :
 	def __init__(self, **kwargs) :
 		super(Submission, self).__init__(**kwargs)
 
-db.create_all()
+# db.create_all()
 Session(app)
 socketio = SocketIO(app)
 
@@ -123,8 +124,9 @@ pno = 0
 IST = pytz.timezone('Asia/Kolkata')
 utc = pytz.utc
 
+
 startTime = datetime(2024,1,2,19,10,0) #Datetimes in UTC
-endTime = datetime(2024,1,2,23,30,0)
+endTime = datetime(2025,1,2,23,30,0)
 
 startTime = utc.localize(startTime).astimezone(IST)
 endTime = utc.localize(endTime).astimezone(IST)
@@ -147,7 +149,8 @@ def returnRemTime():
 def setRemTime():
 	usr = User.query.filter_by(id=session['userid']).first()
 	usr.remTime = int(returnRemTime())
-	db.engine.execute(f"update users set rem_time = {returnRemTime()} where id = {session['userid']}")
+	db.session.execute(text(f"UPDATE users SET rem_time = :rem_time WHERE id = :user_id"), 
+                   {"rem_time": returnRemTime(), "user_id": session['userid']})
 	db.session.commit()
 	return
 
@@ -446,5 +449,7 @@ def submissions() :
 
 	return render_template('submissions.html',name = session['username'],submissions = subs,to_time = time.strftime,to_ttuple = time.gmtime)
 
-if __name__ == '__main__' :
-	app.run()
+if __name__ == "__main__":
+    with app.app_context():
+        db.create_all()
+    app.run(debug=True)

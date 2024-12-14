@@ -15,7 +15,6 @@ Contest Home Page
 
 {% block top_part %}
 <h1>E-CONTEST</h1>
-<div id = "hello">Welcome {{name}} </div>
 <form id = "complete_test" name = "complete_test" method = "POST" action = "{{url_for('dashboard')}}">
 	<input name = "quit" type = "submit" value = "Complete Test" id = "quit" onclick = "confirmSubmit(event);">
 	<input type = "hidden" name = "remTime" id = "remTime" value = "{{rem_time}}">
@@ -27,15 +26,16 @@ Contest Home Page
 {% block page_content %}
 <div class = "content">
 	<div id = "quick-link-left">
-		<span>GO TO : </span>
-		<a href = "https://jsfiddle.net/ao6egwh9/3/" target = "_blank">Online Compiler</a>
+		<a href = "https://tio.run/#keg" target = "_blank">Online Compiler</a>
 	</div>
 	<div id = "quick-link-right">
-		<span>GO TO : </span>
-		<a href = "{{url_for('standings')}}" target = "_blank">Standings</a>
-		<br/>
-		<span id = "space-span"></span>
-		<a href = "{{url_for('submissions')}}">Submissions</a>
+		<div class = "standings-box">
+		<a href = "{{url_for('standings')}}" target = "_blank" class = "Standings">Standings</a>
+		</div>
+		
+		<di class = "submissions-box">
+		<a href = "{{url_for('submissions')}}" class = "submissions">Submissions</a>
+		</div>
 	</div>
 	<div id="snackbar">
 		{% with messages = get_flashed_messages() %}
@@ -48,7 +48,7 @@ Contest Home Page
 	</div>
 	<div class = "custom-select">
 		<select form = "code-edit" id = "question-select" name = "question-select" onchange = "main_page_content()">
-			<option value = "--">--</option>
+			<option class = "boxtext" value = "--">QUESTIONS/SYNTAX</option>
 			<option value = "INS">Syntax Sheet</option>
 			<option value = "QN1">Question 1</option>
 			<option value = "QN2">Question 2</option>
