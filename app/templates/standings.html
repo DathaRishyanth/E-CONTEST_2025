@@ -31,6 +31,8 @@ Contest Standings
 				<th>Q6</th>
 				<th>Q7</th>
 				<th>Q8</th>
+				<th>Q9</th>
+				<th>Q10</th>
 				<th>TOTAL SCORE</th>
 			</tr>
 			{% for res in results : %}
@@ -74,6 +76,16 @@ Contest Standings
 				{% endif %}
 				{% if res.q8s is not none : %}
 				<td>{{res.q8s}}</td>
+				{% else : %}
+				<td>-</td>
+				{% endif %}
+				{% if res.q9s is not none : %}
+				<td>{{res.q9s}}</td>
+				{% else : %}
+				<td>-</td>
+				{% endif %}
+				{% if res.q10s is not none : %}
+				<td>{{res.q10s}}</td>
 				{% else : %}
 				<td>-</td>
 				{% endif %}

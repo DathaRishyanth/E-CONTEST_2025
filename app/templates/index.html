@@ -16,8 +16,8 @@ Contest Home Page
 {% block top_part %}
 <h1>E-CONTEST</h1>
 <form id = "complete_test" name = "complete_test" method = "POST" action = "{{url_for('dashboard')}}">
-	<input name = "quit" type = "submit" value = "Complete Test" id = "quit" onclick = "confirmSubmit(event);">
 	<input type = "hidden" name = "remTime" id = "remTime" value = "{{rem_time}}">
+	<input name = "quit" type = "submit" value = "Complete Test" id = "quit" onclick = "confirmSubmit(event);">
 </form>
 <div id = "timer">Timer
 </div>
@@ -26,17 +26,13 @@ Contest Home Page
 {% block page_content %}
 <div class = "content">
 	<div id = "quick-link-left">
-		<a href = "https://tio.run/#keg" target = "_blank">Online Compiler</a>
-	</div>
-	<div id = "quick-link-right">
-		<div class = "standings-box">
-		<a href = "{{url_for('standings')}}" target = "_blank" class = "Standings">Standings</a>
-		</div>
 		
-		<di class = "submissions-box">
-		<a href = "{{url_for('submissions')}}" class = "submissions">Submissions</a>
-		</div>
+		<button class = "compiler"><a href = "https://tio.run/#keg" target = "_blank">Online Compiler</a></button>
+		
+		<button class = "standings"><a href = "{{url_for('standings')}}" target = "_blank">Standings</a></button>
+		<button class = "submissions"><a href = "{{url_for('submissions')}}">Submissions</a></button>
 	</div>
+
 	<div id="snackbar">
 		{% with messages = get_flashed_messages() %}
 		    {% if messages %}
@@ -48,7 +44,7 @@ Contest Home Page
 	</div>
 	<div class = "custom-select">
 		<select form = "code-edit" id = "question-select" name = "question-select" onchange = "main_page_content()">
-			<option class = "boxtext" value = "--">QUESTIONS/SYNTAX</option>
+			<option value = "--">Questions/Syntax</option>
 			<option value = "INS">Syntax Sheet</option>
 			<option value = "QN1">Question 1</option>
 			<option value = "QN2">Question 2</option>
@@ -58,6 +54,8 @@ Contest Home Page
 			<option value = "QN6">Question 6</option>
 			<option value = "QN7">Question 7</option>
 			<option value = "QN8">Question 8</option>
+			<option value = "QN9">Question 9</option>
+			<option value = "QN10">Question 10</option>
 		</select>
 	</div>
 

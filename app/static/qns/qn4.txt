@@ -1,17 +1,23 @@
-                                            STRING COMPARISION
+                                                            EMORDNILAP?
 
-Given two strings of the same length containing only the characters ‘a’, ‘b’, and ‘c’.
-Check whether both strings are the same. If the same print YES else print NO.
+You are given a string S consisting of lowercase or uppercase English letters. Your task is to determine if the string is palindrome or not. 
+A palindrome is a string that reads the same backward or forward.
 
-INPUT   :  Two strings containing only 'a', 'b', and 'c'.
-OUTPUT  :  Print "YES" or "NO"(Without the quotes and the letters should be Uppercase).
+INPUT:
+A single string S, where S contains only letters and numbers and |S| is the length of the string. The string contains no whitespace characters.
 
-EXAMPLES:
+OUTPUT:
+Print YES if the string is a palindrome, otherwise print NO.
 
-INPUT_1 :  abababbaaab
-INPUT_2 :  abababbaaab
-OUTPUT  :  YES
+CONSTRAINT:
+    1 ≤ |S| ≤ 1000
 
-INPUT_1 :  abababbaaab
-INPUT_2 :  ababbbbabbb
-OUTPUT  :  NO
+EXAMPLE:
+    INPUT   :   rotator
+    OUTPUT  :   YES
+
+    INPUT   :   ABBa
+    OUTPUT  :   NO
+
+    INPUT   :   toshit
+    OUTPUT  :   NO

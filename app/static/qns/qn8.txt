@@ -1,14 +1,24 @@
-                                             SMALLEST NUMBER
+                                                Maximum Effort: The Array Edition
 
-Take a 5-digit number as input consisting of only the digits 1,2,3,4,5. Output the smallest number that can be obtained by rearranging the digits.
+You are given an array of positive integers ending with -1(one integer in each line). The value -1 indicates the 
+end of the input and should not be considered as part of the array.Print the maximum integer in the array.
 
-INPUT   :  Single string containing only 1,2,3,4,5.
-OUTPUT  :  Single string containing only 1,2,3,4,5.
 
-EXAMPLES:
+CONSTRAINTS:
+    i)  1 ​≤ N ​≤ 1000 , Where N is the size of the array
+    ii) 1 ​≤ Ai ​≤ 1000 , Where Ai is the ith element of the array.
 
-INPUT   :  35423
-OUTPUT  :  23345
+EXAMPLE:
+    INPUT    :    2
+                  5
+                  4
+                  7
+                  8
+                 -1
+    OUTPUT   :    8
 
-INPUT   :  35124
-OUTPUT  :  12345
+    INPUT    :    5
+                  4
+                  5
+                  -1
+    OUTPUT   :    5

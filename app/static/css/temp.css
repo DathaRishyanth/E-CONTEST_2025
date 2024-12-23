@@ -1,0 +1,275 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    counter-reset: Count-Value;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+#loader {
+    position: fixed;
+    background: url("./img/backgrnd-w.png");
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    width: 100%;
+    height: 100%;
+    z-index: 99;
+}
+
+#power {
+    z-index: 100;
+    position: relative;
+    font-family: Arial, sans-serif, serif;
+    top: 20%;
+}
+
+#amex {
+    width: 30%;
+    height: 50%;
+    z-index: 100;
+    background: url("./img/arcesium.png");
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    position: relative;
+    top: 25%;
+    -webkit-animation: mymove 3s infinite;
+    animation: mymove 3s infinite;
+}
+
+@-webkit-keyframes mymove {
+    0% { left: -40%; opacity: 0; }
+    20% { left: 20%; opacity: 0.8; }
+    40% { left: 30%; opacity: 1; }
+    60% { left: 30%; opacity: 1; }
+    80% { left: 40%; opacity: 0.8; }
+    100% { left: 140%; opacity: 0; }
+}
+
+@keyframes mymove {
+    0% { left: -40%; opacity: 0; }
+    20% { left: 20%; opacity: 0.8; }
+    40% { left: 30%; opacity: 1; }
+    60% { left: 30%; opacity: 1; }
+    80% { left: 40%; opacity: 0.8; }
+    100% { left: 140%; opacity: 0; }
+}
+
+#amex-logo {
+    position: relative;
+    padding: 0;
+    margin: 0;
+    width: 6%;
+    height: 100%;
+    background: url("./img/arcesium-logo.png");
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.container {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: -2;
+    background: url("./img/computer-w.png");
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+}
+
+
+
+.title-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 4em;
+    background-color: rgb(34, 34, 34);
+    color: white;
+}
+
+h1 {
+    margin: 0;
+    padding-top: 0.5em;
+    text-align: center;
+}
+
+#hello {
+    background-color: rgb(175, 63, 210);
+    font-weight: bold;
+    width: 80%;
+    margin-left: 8%;
+    border-radius: 0.5em;
+    height: 3em;
+    padding-top: 0.5em;
+    text-align: center;
+    font-size: 1.5em;
+    margin-top: 1em;
+    margin-bottom: 1.5em;
+    color: white;
+    font-size: 25px;
+}
+
+.content {
+    position: relative;
+    width: 90%;
+    left: 5%;
+    top: 4em;
+}
+
+.login-container {
+    position: relative;
+    top: 5em;
+    left: 30%;
+    width: 40%;
+    height: 35em;
+    background-color: white;
+    padding-top: 1.2em;
+    padding-bottom: 1.2em;
+    border-radius: 1em;
+    backdrop-filter: blur(10px);
+    text-align: center; /* Center the content */
+}
+
+.register-container {
+    position: relative;
+    top: 5em;
+    left: 30%;
+    width: 40%;
+    background: linear-gradient(135deg, #f5f7fa, #c3cfe2); /* Add gradient background */
+    padding: 2em; /* Adjust padding */
+    border-radius: 1em; /* Increase border radius */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add box shadow */
+    backdrop-filter: blur(10px);
+    text-align: center; /* Center the content */
+}
+
+.register-container h2 {
+    font-family: 'Arial', sans-serif;
+    color: #333;
+    margin-bottom: 1em;
+}
+
+input[type=text], input[type=submit], input[type=password] {
+    width: 90%; /* Increase width */
+    height: 3em;
+    margin: 0.5em auto; /* Center the inputs */
+    display: block;
+    border: 1px solid #ccc;
+    border-radius: 0.5em;
+    padding: 0.5em;
+    font-size: 1em;
+}
+
+input[type=submit] {
+    background-color: #6a11cb; /* Update button color */
+    background-image: linear-gradient(315deg, #6a11cb 0%, #2575fc 74%);
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+input[type=submit]:hover {
+    background-image: linear-gradient(315deg, #2575fc 0%, #6a11cb 74%);
+    opacity: 0.9;
+}
+
+.custom-select {
+    position: relative;
+    top: 3em;
+    left: 40%;
+    width: 20%;
+    height: 2.5em;
+}
+
+#question-select {
+    width: 100%;
+    height: 100%;   
+}
+
+#question-box {
+    position: absolute;
+    margin-top: 2em;
+    margin-bottom: 2em;
+    padding: 0.6em 0.4em 0.6em 0.6em;
+    width: 90%;
+    height: 40em;
+    top: 10em;
+    left: 5%;
+    background-color: whitesmoke;
+    overflow: auto;
+    white-space: pre;
+    font-size: 16px;
+    font-family: "Courier New", Courier, monospace, Helvetica, Arial, serif;
+    font-weight: 600;
+    font-style: normal;
+    border: 3px solid rgb(10, 198, 244);
+    display: none;
+}
+
+#welcome-message{
+	background-color: #6a11cb;
+	background-image: linear-gradient(315deg, #6a11cb 0%, #2575fc 74%);
+	color: white;
+	border: none;
+	cursor: pointer;
+	transition: background 0.3s ease;
+	width: 80%;
+	margin-left: 10%;
+	border-radius: 0.5em;
+	height: 4em;
+	padding-top: 0.5em;
+	text-align: center;
+	font-size: 1.5em;
+	margin-top: 1em;
+	margin-bottom: 1.5em;
+	color: white;
+	font-size: 25px;
+}
+
+#code-editor {
+    position: absolute;
+    margin-bottom: 2em;
+    margin-top: 2em;
+    padding: 0.6em 0.6em 0.6em 0.6em;
+    width: 90%;
+    height: 60em;
+    top: 55em;
+    left: 5%;
+    font-size: 16px;
+    display: none;
+    border: 3px dotted white;
+}
+
+#quick-link-left, #quick-link-right, .go-back-link, #snackbar, #timer {
+    border-radius: 0.5em;
+}
+
+input[type=text], input[type=submit], input[type=password] {
+    width: 80%;
+    height: 3.8em;
+    padding-left: 0.6em;
+    padding-right: 0.6em;
+    margin: 4% 8% 4% 8%;
+    display: inline-block;
+    border: 0.1em solid purple;
+    font-size: large;
+    border-radius: 0.5em;
+}
+
+input[type=submit] {
+    margin: 8%;
+    background-color: rgb(175, 63, 210);
+    color: white;
+    border: none;
+    border-radius: 0.5em;
+}
+
+input[type=submit]:hover {
+    background-color: rgb(175, 63, 210);
+    opacity: 0.8;
+}
+
+/* Additional rules for centering, layout, and button interactions as needed */

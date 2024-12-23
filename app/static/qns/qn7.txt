@@ -1,17 +1,13 @@
-                                                      STAR
+                                                        Digitally Summed Up!
 
-Take a string containing n dots as input and print a star pattern containing 'n' lines with the number of stars in each line equal to the line number.
+You are given a natural number N as input. Print "1" if the sum of the digits equals to 6, else print "0".
 
-INPUT   :  Single string containing n dots '.'.
-OUTPUT  :  'n' lines containing only stars.
+CONSTRAINT:
+    1 ≤ N ≤ 1000
 
-EXAMPLES:
+Example:
+    INPUT   :   123
+    OUTPUT  :   1
 
-INPUT   :  .......
-OUTPUT  :  *
-           **
-           ***
-           ****
-           *****
-           ******
-           *******
+    INPUT   :   2025
+    OUTPUT  :   0

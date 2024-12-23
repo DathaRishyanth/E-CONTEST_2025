@@ -1,16 +1,16 @@
-                                                    MULTIPLICATION
+                                                Not All Primes Wear Capes
 
-Take two strings containing n and m "*"s respectively. Print a string containing n multiplied by m number of "*".
+Given a natural number(N), determine whether the number is prime or not. Output "1" if the given natural number is prime
+else Output "0".
 
-INPUT    :  Two strings containing only "*". 
-OUTPUT   :  Single string containing only "*".
 
-EXAMPLES:
+CONSTRAINT:
+    1 ≤ N ≤ 10^3
 
-INPUT_1  :  ***
-INPUT_2  :  ****
-OUTPUT   :  ************
+Example : 
 
-INPUT_1  :  **
-INPUT_2  :  ***
-OUTPUT   :  ******
+	INPUT    :   5
+	OUTPUT   :   1
+
+	INPUT    :   10
+	OUTPUT   :   0

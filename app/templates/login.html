@@ -1,11 +1,11 @@
 {% extends "./layout.html" %}
 
 {% block css_link %}
-<link rel = "stylesheet" href = "{{ url_for('static', filename='css/styles1.css')}}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/styles1.css') }}">
 {% endblock %}
 
 {% block js_link %}
-<script src = "{{ url_for('static', filename='js/script2.js')}}"></script>
+<script src="{{ url_for('static', filename='js/script2.js') }}"></script>
 {% endblock %}
 
 {% block title %}
@@ -14,25 +14,25 @@ Contestants Login Page
 
 {% block top_part %}
 <h1>E-CONTEST</h1>
-
 {% endblock %}
 
 {% block page_content %}
 
 {% if error : %}
-<p id = "err" style = "display: none;">{{error}}</p>
+<p id="err" style="display: none;">{{error}}</p>
 {% endif %}
 
-<div class = "content">
-	<form name = "login_form" method = "POST" action = "{{url_for('login')}}">
-		<div class = "login-container">
-			{{form.hidden_tag()}}
-			{{form.username(placeholder = "Username")}}
-			<br/>
-			{{form.password(placeholder = "Password")}}
-			<input name = "submit" type = "submit" value = "Login">
-			<div id = "hello">Welcome <br/>Participant</div>
-		</div>
-	</form>
+<div class="content">
+    <form name="login_form" method="POST" action="{{url_for('login')}}">
+        <div class="login-container">
+           
+            {{form.hidden_tag()}}
+            {{form.username(placeholder="Username")}}
+            <br/>   
+            {{form.password(placeholder="Password")}}
+            <input name="submit" type="submit" value="Login">
+			<div id="welcome-message">Welcome <br/>Participant</div>
+        </div>
+    </form>
 </div>
 {% endblock %}

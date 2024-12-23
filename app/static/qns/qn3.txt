@@ -1,16 +1,19 @@
-                                                     COUNT
+                                                        SUM OF ASCII
 
-Take a string containing only ‘a’ and ‘b’ as input and output the number of b’s present in the string.
-The string can be of any length less than 100 but it is guaranteed that the number of b’s in the string is
-less than 10.
 
-INPUT   :  Single string containing only ‘a’ and ‘b’. (length of string <100)
-OUTPUT  :  Single integer denoting the number of b's.
+You are given a string S consisting of uppercase or lowercase English letters. Your task is to calculate and print the mean of the ASCII values of the characters in the string.
+The mean is defined as the sum of ASCII values of all characters in the string divided by the number of characters.
 
-EXAMPLES:
+Input:
+A single string S , where ∣S∣ is the length of the string.
 
-INPUT   :  abbbaaabababaa
-OUTPUT  :  6
+Output:
+Print the mean of the ASCII values of the characters in S as a floating-point number rounded to 3 decimal places.
 
-INPUT   :  bababababbba
-OUTPUT  :  7
+CONSTRAINTS:
+    1 ≤ |S| ≤ 1000
+
+EXAMPLE:
+    INPUT  :   DOG
+    OUTPUT :   72.667
+

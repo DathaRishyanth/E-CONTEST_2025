@@ -5,7 +5,7 @@ from wtforms.validators import InputRequired, Email, Length, EqualTo
 from flask_session import Session
 from sqlalchemy import text
 import os
-#from app.class_orm import db,User,Result,Submission
+# from app.class_orm import db,User,Result,Submission
 import time, pytz
 from datetime import datetime, timedelta
 #from werkzeug import generate_password_hash,check_password_hash
@@ -70,6 +70,8 @@ class Result(db.Model) :
 	q6s = db.Column(db.Integer)
 	q7s = db.Column(db.Integer)
 	q8s = db.Column(db.Integer)
+	q9s = db.Column(db.Integer)
+	q10s = db.Column(db.Integer)
 	q1t = db.Column(db.Numeric(precision = 14,scale = 4))
 	q2t = db.Column(db.Numeric(precision = 14,scale = 4))
 	q3t = db.Column(db.Numeric(precision = 14,scale = 4))
@@ -78,6 +80,8 @@ class Result(db.Model) :
 	q6t = db.Column(db.Numeric(precision=14, scale=4))
 	q7t = db.Column(db.Numeric(precision=14, scale=4))
 	q8t = db.Column(db.Numeric(precision=14, scale=4))
+	q9t = db.Column(db.Numeric(precision=14, scale=4))
+	q10t = db.Column(db.Numeric(precision=14, scale=4))
 	tot_score = db.Column(db.Integer)
 	tot_time = db.Column(db.Numeric(precision = 14,scale = 4))
 
@@ -124,9 +128,10 @@ pno = 0
 IST = pytz.timezone('Asia/Kolkata')
 utc = pytz.utc
 
-
-startTime = datetime(2024,1,2,19,10,0) #Datetimes in UTC
-endTime = datetime(2025,1,2,23,30,0)
+#14tth dec 2024 11 am
+startTime = datetime(2024,12,14,11,0,0)
+#14th dec 2024 3 pm
+endTime = datetime(2025,12,14,15,0,0)
 
 startTime = utc.localize(startTime).astimezone(IST)
 endTime = utc.localize(endTime).astimezone(IST)
@@ -340,6 +345,18 @@ def dashboard() :
 					elif currRes.q8s == None or currRes.q8s < 100:
 						currRes.q8s = 100
 						currRes.q8t = init_time
+				elif(qn == 'QN9'):
+					if currRes.q9s == 100:
+						currRes.q9t = min([currRes.q9t, init_time])
+					elif currRes.q9s == None or currRes.q9s < 100:
+						currRes.q9s = 100
+						currRes.q9t = init_time
+				elif(qn == 'QN10'):
+					if currRes.q10s == 100:
+						currRes.q10t = min([currRes.q10t, init_time])
+					elif currRes.q10s == None or currRes.q10s < 100:
+						currRes.q10s = 100
+						currRes.q10t = init_time
 				submis = Submission(userid=session['userid'], mark=100, message=res, timeofs=init_time, qnno=int(qn_no))
 
 			else:
@@ -359,12 +376,16 @@ def dashboard() :
 					currRes.q7s = currRes.q7s if currRes.q7s is not None else 0
 				elif (qn == 'QN8'):
 					currRes.q8s = currRes.q8s if currRes.q8s is not None else 0
+				elif(qn == 'QN9'):
+					currRes.q9s = currRes.q9s if currRes.q9s is not None else 0
+				elif(qn == 'QN10'):
+					currRes.q10s = currRes.q10s if currRes.q10s is not None else 0
 				submis = Submission(userid = session['userid'],mark = 0,message = res,timeofs = init_time,qnno = int(qn_no))
 
 			db.session.add(submis)
 
-			scorel = [currRes.q1s,currRes.q2s,currRes.q3s,currRes.q4s,currRes.q5s,currRes.q6s,currRes.q7s,currRes.q8s]
-			timel = [currRes.q1t,currRes.q2t,currRes.q3t,currRes.q4t,currRes.q5t,currRes.q6t,currRes.q7t,currRes.q8t]
+			scorel = [currRes.q1s,currRes.q2s,currRes.q3s,currRes.q4s,currRes.q5s,currRes.q6s,currRes.q7s,currRes.q8s,currRes.q9s,currRes.q10s]
+			timel = [currRes.q1t,currRes.q2t,currRes.q3t,currRes.q4t,currRes.q5t,currRes.q6t,currRes.q7t,currRes.q8t,currRes.q9t,currRes.q10t]
 			pno += 1
 			currRes.tot_score = sum([e for e in scorel if e is not None])
 			currRes.tot_time = sum([decimal.Decimal(e) for e in timel if e is not None])

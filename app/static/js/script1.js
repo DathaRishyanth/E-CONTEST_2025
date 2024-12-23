@@ -96,6 +96,12 @@ function main_page_content() {
 		else if (val == 'QN8') {
 			$("#question-box").load("../static/qns/qn8.txt");
 		}
+		else if(val == 'QN9'){
+			$("#question-box").load("../static/qns/qn9.txt");
+		}
+		else if(val == 'QN10'){
+			$("#question-box").load("../static/qns/qn10.txt");
+		}
 	}
 
 }

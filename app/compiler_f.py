@@ -1,573 +1,1126 @@
-"""
-Python interpreter for the esoteric language ><> (pronounced /ˈfɪʃ/).
-Usage: ./fish.py --help
-More information: http://esolangs.org/wiki/Fish
-Requires python 2.7/3.2 or higher.
-"""
-
-import sys
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+import sys #Used for file parsing
+import Parse #Used for Keg source parsing
+import uncompress #Used for uncompressing Keg strings
+import preprocess #Used for expanding preprocessor cues
+import Stackd #The main data type of Keg
+import signal
 import os
-import time
-import random
-from collections import defaultdict
-# inputpath = '/home/saiganesh/Desktop/E-Contest/E-Contest/app/evaluation/input/qn1/tc1.txt'
+import re
+import multiprocessing as mp
+from KegLib import *
 
-# constants
-NCHARS = "0123456789abcdef"
-ARITHMETIC = "+-*%"  # not division, as it requires special handling
-COMPARISON = {"=": "==", "(": "<", ")": ">"}
-DIRECTIONS = {">": (1, 0), "<": (-1, 0), "v": (0, 1), "^": (0, -1)}
-MIRRORS = {
-    "/": lambda x, y: (-y, -x),
-    "\\": lambda x, y: (y, x),
-    "|": lambda x, y: (-x, y),
-    "_": lambda x, y: (x, -y),
-    "#": lambda x, y: (-x, -y)
+'''Constants Section'''
+'''The following lines will define all the commands and place them into
+more readable/modular constants'''
+
+#Built-ins
+
+LENGTH = "!"
+DUPLICATE = ":"
+POP = "_"
+PRINT_CHR = ","
+PRINT_INT = "."
+INPUT = "?"
+R_SHIFT = '"'
+L_SHIFT = "'"
+RANDOM = "~"
+REVERSE = "^"
+SWAP = "$"
+
+DESCRIPTIONS = {
+    LENGTH: "Push the length of the stack",
+    DUPLICATE: "Duplicate the top of stack",
+    POP: "Pop the top of stack",
+    PRINT_CHR: "Print the top of stack, calling _ord(top)",
+    PRINT_INT: "Print the top of stack, as is",
+    INPUT: "Get input from user",
+    L_SHIFT: "Left shift stack",
+    R_SHIFT: "Right shift stack",
+    RANDOM: "Push a random number between -inf and inf",
+    REVERSE: "Reverse the stack",
+    SWAP: "Swap the top two items on stack"
 }
 
+#Unofficial built-in functions
+#Note: Most of these are from myu-sername/A̲̲/User:A, so go check out their
+#repos/esolang account/code golf userpage and upvote their answers
 
-# class _Getch:
-#     """
-#     Provide cross-platform getch functionality. Shamelessly stolen from
-#     http://code.activestate.com/recipes/134892/
-#     """
-#     def __init__(self):
-#         try:
-#             self._impl = _GetchWindows()
-#         except ImportError:
-#             self._impl = _GetchUnix()
+IOTA = "Ï"
+DECREMENT = ";"
+SINE = "§"
+APPLY_ALL = "∑"
+NICE_INPUT = "¿"
 
-#     def __call__(self): return self._impl()
+DESCRIPTIONS[IOTA] = "Replaces the top of stack with all items from [top->0]"
+DESCRIPTIONS[DECREMENT] = "Decrement the top of stack"
+DESCRIPTIONS[SINE] = "sin(top)"
+DESCRIPTIONS[APPLY_ALL] = "Preprocess as (!;| --> Apply to all stack"
+DESCRIPTIONS[NICE_INPUT] = "Peform nice input"
 
-
-# class _GetchUnix:
-#     def __init__(self):
-#         import tty, sys
-
-#     def __call__(self):
-#         import sys, tty, termios
-#         fd = sys.stdin.fileno()
-#         old_settings = termios.tcgetattr(fd)
-#         try:
-#             tty.setraw(sys.stdin.fileno())
-#             ch = sys.stdin.read(1)
-#         finally:
-#             termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-#         return ch
-
-
-# class _GetchWindows:
-#     def __init__(self):
-#         import msvcrt
-
-#     def __call__(self):
-#         import msvcrt
-#         return msvcrt.getch()
-# getch = _Getch()
-
-
-# def read_character():
-#     """Read one character from stdin. Returns -1 when no input is available."""
-#     # if sys.stdin.isatty():
-#     #     # we're in console, read a character from the user
-#     #     char = getch()
-#     #     # check for ctrl-c (break)
-#     #     if ord(char) == 3:
-#     #         sys.stdout.write("^C")
-#     #         sys.stdout.flush()
-#     #         raise KeyboardInterrupt
-#     #     else: return char
-#     # else:
-#     #     # input is redirected using pipes
-#     #     char = sys.stdin.read(1)
-#     #     # return -1 if there is no more input available
-#     with open("input.txt", 'r') as f:
-#         char = f.read()
+#Some Reg commands not by Btup but by JonoCode9374
+EXCLUSIVE_RANGE = "∂"
+INCLUSIVE_RANGE = "•"
+GENERATE_RANGE = "ɧ"
+NUMBER_SPLIT = "÷"
+FACTORIAL = "¡"
+EMPTY = "ø"
+PRINT_ALL = "Ω"
+NOT = "¬"
+AND = ("⒄", "⟑") #This is what a temp code page looks like when a more certain page is added
+OR = ("⒅", "⟇" )
+PREDEFINED_CONSTANT = "λ"
+PI = "π"
+HALVE_TOP = "½" #math(stack, "/")
+INCREMENT = ("⑨", "؛")
+DOUBLE = "⑵" #dobule the top of stack
+NEGATE = "±" #*-1
+ONE_ON_X = ("⑱", "⅟") #1/tos
+ROUND = ("⑲", "𝚪") #uses round function
+WHILE_STUFF = ("⑳", "↬") #Preprocesses as {!|
+INCREMENT_REGISTER = ("⑹", "ꜛ")
+DECREMENT_REGISTER = ("⑺", "ꜜ")
+PUSH_REGISTER_NO_EMPTY = ("⑻", "⅋")
+X_TO_BASE = "⬥" # Huh, whould'a thought it'd take a code golf challenge to force me to finally implement this?
 
 
-#     return char if char != "" else -1
+#Keg+ Section
+PUSH_N_PRINT = "ȦƁƇƉƐƑƓǶȊȷǨȽƜƝǪǷɊƦȘȚȔƲɅƛƳƵ"
+for n in range(127234, 127243): PUSH_N_PRINT += chr(n)
+#NOTE: Don't go trying to print PUSH_N_PRINT in IDLE...
+#Tkinter doesn't like some of the characters
+
+ALPHA_MAP = "abcdefghijklmnopqrstuvwxyz1234567890"
 
 
-class Interpreter:
-    """
-    ><> "compiler" and interpreter.
-    """
+INTEGER_SCAN = "‡"
+TO_INT, TO_FLOAT, TO_STRING, TO_STACK, TO_CHAR = "ℤℝ⅍℠ⁿ"
+UPPER, LOWER, TOGGLE = "⟰⟱⟷"
+SQUARE_OPERATOR = "²"
+STRING_INPUT = "᠀"
+ALL_TRUE = "∀"
+ALL_EQUAL = "≌"
+SUMMATE = "⅀"
+EVAL_EXEC = "ß"
+END_SWITCH = "™"
+MULTILINE_INPUT = "᠈"
+MAP = ("⑷", "£") #will be £. closed with »
+MAP_CLOSE = ("⑸", "»") #As aforementioned, will be »
 
-    def __init__(self, code, inputpath, outputpath, Q):
-        """
-        Initialize a new interpreter.
-        Arguments:
-            code -- the code to execute as a string
-        """
-        # check for hashbang in first line
-        # lines = code.split("\n")
-        lines = code
-        if lines[0][:2] == "#!":
-            code = "\n".join(lines[1:])
+VARIABLE_SET = "©"
+VARIAGE_GET = "®"
 
-        # construct a 2D defaultdict to contain the code
-        self._codebox = defaultdict(lambda: defaultdict(int))
-        line_n = char_n = 0
-        # for char in code:
-        #     if char != "\n":
-        #         self._codebox[line_n][char_n] = 0 if char == " " else ord(char)
-        #         char_n += 1
-        #     else:
-        #         char_n = 0
-        #         line_n += 1
-        for l in lines:
-            for char in l:
-                if char != "\n":
-                    self._codebox[line_n][char_n] = 0 if char == " " else ord(char)
-                    char_n += 1
+PERFORM_INDEX = "⊙"
+INFINITY = "א"
+RANDOM_INSTRUCTION = "⯑" #Chooses an instruction from
+#all avaliable commands and puts it in.
+
+DIV_MOD = ("①", "‰")
+EQUAL_TYPES = ("②", "≡")
+FIND_POS = "③"
+PRINT_RAW_NO_POP = "④"
+FUNCTION_MODIFIERS = "⑤⑥⑦⑧"
+PRINT_NICE_NO_POP = "⑩"
+TO_PERCENTAGE = "⑪"
+ITEM_IN = "⊂"
+
+EMPTY_STRING, SPACE_STRING = "⑫⑬"
+SORT_STACK = "⑭"
+SINGULAR_SCC = "⑮"
+POP_ITEM = "⑯" #Takes the TOS and removes all instances of TOS
+FILTER_BY = "⑰" #Takes a keg-string and pops all items not matching condition
+
+LENGTH_TOP, REVERSE_TOP = "⑴⑶"
+
+REGISTER_AUG_ADD, REGISTER_AUG_SUB, REGISTER_AUG_MULT, REGISTER_AUG_DIV = \
+                  "⑼⑽⑾⑿"
+
+REGISTER_SET, REGISTER_LENGTH, REGISTER_REVERSE = "⒀⒁⒂"
+TRUTHY = "⒃"
+
+#'Keywords'
+
+COMMENT = "#"
+BRANCH = "|"
+ESCAPE = "\\"
+REGISTER = "&"
+STRING = "`"
+FUNCTION = "@"
+
+DESCRIPTIONS[COMMENT] = "Standard line comment"
+DESCRIPTIONS[BRANCH] = "Switch to the next part of the structure"
+DESCRIPTIONS[ESCAPE] = "Push the code page value of the next character"
+DESCRIPTIONS[STRING] = "Push an uncompressed string"
+DESCRIPTIONS[FUNCTION] = "Start/Call the given function"
+
+#Operators
+MATHS = "+-*/%Ë"
+CONDITIONAL = "<>=≬≤≠≥"
+NUMBERS = "0123456789"
+
+DESCRIPTIONS[MATHS] = "Pop x and y, and push y {0} x"
+DESCRIPTIONS[CONDITIONAL] = "Pop x and y, and push y {0} x"
+DESCRIPTIONS[NUMBERS] = "Push {0}"
+
+#Whitespace
+TAB = "\t"
+NEWLINE = "\n"
+
+#Code page - Special to Keg
+unicode = "Ï§∑¿∂•ɧ÷¡Ëė≬ƒß‘“"
+unicode += "„«®©ëλº√₳¬≤Š≠≥Ėπ"
+unicode += " !\"#$%&'()*+,-./"
+unicode += "0123456789:;<=>?"
+unicode += "@ABCDEFGHIJKLMNO"
+unicode += "PQRSTUVWXYZ[\\]^_"
+unicode += "`abcdefghijklmno"
+unicode += "pqrstuvwxyz{|}~ø"
+unicode += "¶\n\t⊂½‡™±¦→←↶↷"
+unicode += "✏█↗↘□²ⁿ║ṡ⟰⟱⟷"
+unicode += "ℤℝ⅍℠א∀≌᠀⊙᠈⅀"
+unicode += "ȦƁƇƉƐƑƓǶȊȷǨȽƜƝǪǷɊƦȘȚȔƲɅƛƳƵ" #push'n'print
+unicode += "☭" #I don't know what this'll do. But it looks cool
+unicode += "⬠⬡⬢⬣⬤⬥⬦⬧⬨⬩⬪⬫⬬⬭⬮⬯"#drawing
+unicode += "⯑" #Do something random
+unicode += "①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳⑴⑵⑶⑷⑸⑹⑺⑻⑼⑽⑾⑿⒀⒁⒂⒃⒄⒅↫"
+
+
+for n in range(127234, 127243): unicode += chr(n)
+args = None
+
+'''Transpiler Helpers'''
+
+def balance(source: str) -> str:
+    '''
+
+    Takes: source [str]
+    Does: Balances any unclosed brackets and replaces any escaped brackets with
+    an expression that evaluates to the ordinal value of the bracket. This is
+    because it was too hard to have literal brackets in the source and have
+    them escaped like other characters.
+    Returns: str
+
+    "abc" -> "abc"
+    "(+" -> "(+)"
+    "{[{[" -> "{[{[]}]}"
+    "\{" -> "z1-"
+
+    '''
+
+    brackets = [] #This is kind of equivalent to the loops list found commonly
+    #in Python BF interpreters.
+    mapping = {"{" : "}", "[" : "]", "(" : ")", "": "", "⑷": "⑸"}
+    alt_brackets = {"{" : "z1+", "}" : "z3+", "(" : "85*",
+                    ")" : "85*1+", "[" : "Z1+",
+                    "]" : "Z3+", "⑷" : "25*25**2*56*+1+",
+                    "⑸" : "25*25**2*56*+2+"}
+
+    escaped = False #Whether or not there is currently an escape sequence
+    string_mode = False #Whether or not I'm currently in a string
+
+    result = ""
+    for char in source:
+
+        if string_mode:
+            if escaped:
+                result += char
+                escaped = False
+                continue
+
+            elif char == "\\":
+                escaped = True
+                result += char
+                continue
+            else:
+                if char == "`":
+                    string_mode = False
+                result += char
+                continue
+        if escaped: #Either escape the bracket or keep the escape
+            if char in alt_brackets:
+                result += alt_brackets[char]
+            else:
+                result += "\\" + char
+            escaped = False
+            continue
+
+        elif char == "\\":
+            escaped = True
+            continue
+
+        elif char == "`":
+            string_mode = True
+
+
+        if char in "[({⑷":
+            brackets.append(char)
+
+        elif char in "])}⑸":
+            for i in range(len(brackets)): #Close an open bracket
+                if mapping[brackets[i]] == char:
+                    brackets[i] = ""
+                    break
+
+        result += char
+
+    if brackets:
+        for char in reversed(brackets): #Close all brackets
+            result += mapping[char]
+
+    return result
+
+def tab_format(string: str) -> str:
+    '''
+    Takes: string [str]
+    Does: Formats the line with tabs at the start. This also happens to
+    recursively format lines within for|while loops/if stmts/functions, which
+    is nice.
+    Returns: str
+
+
+    "abc" -> "    abc\n"
+
+    '''
+    result = ""
+    for line in string.rstrip().split("\n"):
+        result += "    " + line + "\n"
+    return result
+
+'''Actual Transpiler'''
+
+def transpile(source: str, stack="stack", lvl=0):
+    '''
+    Takes: source [str], stack (default="stack") [str]
+    Does: This is the primary function here, as it does the actual transpilation
+    of Keg programs. Without it, there would be no Keg. It first of all parses
+    the source into a list of tokens as defined in `Parse.py`. It then goes
+    through and turns these tokens into python.
+    Returns: str
+
+    '''
+
+    if type(source) is str:
+        source = Parse.parse(source)
+
+
+    if args and args.reversetokens:
+        source = source[::-1]
+
+    comment = False #Whether or not the transpiler is parsing a comment
+    escaped = False #Whether or not the transpiler needs to use escape()
+
+    #Wow, this feels odd. Normally, this would be the interpreter part, but now,
+    #it's just a transpiler. I.e. There would normally be variables here getting
+    #ready for the interpreting that would be about to happen, but not this time
+
+    result = ""
+    tabs = ""
+    #The variable storing the end result
+    for Token in source:
+        name, command = Token.name, Token.data
+        #print(name, command)
+        #^^ used only for debugging while working on the Transpiler
+
+
+        #Deal with comments and potential escaped characters first
+        if comment == True:
+            if command == NEWLINE: #End of Comment
+                comment = False
+            continue
+
+        if name == Parse.CMDS.ESC:
+            escape = False
+            result += f"character(stack, '{command}')\n"
+            continue
+
+        if name == Parse.CMDS.STRING:
+            import KegStrings #Allow for the usage of object strings
+            item = KegStrings.obj_str_extract("`" + command + "`")
+            if type(item) != str: #The object is an object string
+                if type(item) is list: #this is generally raw python.
+                    result += f"{stack}.push(Stack({item}))"
                 else:
-                    char_n = 0
-                    line_n += 1
+                    result += f"{stack}.push({item})"
+            else: #It isn't an object string
+                result += f"iterable({stack}, \"" + command + "\")"
 
-        self._position = [-1, 0]
-        self._direction = DIRECTIONS[">"]
 
-        # the register is initially empty
-        self._register_stack = [None]
-        # string mode is initially disabled
-        self._string_mode = None
-        # have we encountered a skip instruction?
-        self._skip = False
+        #Now, keywords and structures
+        elif command == COMMENT:
+            comment = True
 
-        self._stack = []
-        self._stack_stack = [self._stack]
+        elif command == BRANCH:
+            continue
 
-        # is the last outputted character a newline?
-        self._newline = None
+        elif command == ESCAPE:
+            escaped = True
 
-    def move(self,inputpath, outputpath, Q):
-        """
-        Move one step in the execution process, and handle the instruction (if
-        any) at the new position.
-        """
-        # move one step in the current direction
-        self._position[0] += self._direction[0]
-        self._position[1] += self._direction[1]
+        elif command == REGISTER:
+            result += f"register({stack})"
 
-        # wrap around if we reach the borders of the codebox
-        if self._position[1] > max(self._codebox.keys()):
-            # if the current position is beyond the number of lines, wrap to
-            # the top
-            self._position[1] = 0
-        elif self._position[1] < 0:
-            # if we're above the top, move to the bottom
-            self._position[1] = max(self._codebox.keys())
+        elif name == Parse.CMDS.IF:
 
-        if self._direction[0] == 1 and self._position[0] > max(self._codebox[self._position[1]].keys()):
-            # wrap to the beginning if we are beyond the last character on a
-            # line and moving rightwards
-            self._position[0] = 0;
-        elif self._position[0] < 0:
-            # also wrap if we reach the left hand side
-            self._position[0] = max(self._codebox[self._position[1]].keys())
+            '''
 
-        # execute the instruction found
-        if not self._skip:
-            instruction = int(self._codebox[self._position[1]][self._position[0]])
-            # the current position might not be a valid character
-            try:
-                # use space if current cell is 0
-                instruction = chr(instruction) if instruction > 0 else " "
-            except:
-                instruction = None
-            try:
-                self._handle_instruction(inputpath, outputpath, instruction)
-                # Q.put("ANSWER WRITTEN")
-            except StopExecution:
-                raise
-            except KeyboardInterrupt:
-                # avoid catching as error
-                raise KeyboardInterrupt
-            except Exception as e:
-                # Q.put("something smells fishy...")
-                raise StopExecution("something smells fishy...")
-            return instruction
+            [ifTrue|ifFalse] -->
 
-        self._skip = False
+            if bool(stack.pop()):
+                ifTrue
+            else:
+                ifFalse
 
-    def _handle_instruction(self,inputpath, outputpath, instruction):
-        """
-        Execute an instruction.
-        """
-        if instruction == None:
-            # error on invalid characters
-            raise Exception
+            [ifTrue] -->
 
-        # handle string mode
-        if self._string_mode != None and self._string_mode != instruction:
-            self._push(ord(instruction))
-            return
-        elif self._string_mode == instruction:
-            self._string_mode = None
-            return
+            if bool(stack.pop()):
+                ifTrue
 
-        # instruction is one of ^v><, change direction
-        if instruction in DIRECTIONS:
-            self._direction = DIRECTIONS[instruction]
+            [|ifFalse] -->
 
-        # direction is a mirror, get new direction
-        elif instruction in MIRRORS:
-            self._direction = MIRRORS[instruction](*self._direction)
-
-        # pick a random direction
-        elif instruction == "x":
-            self._direction = random.choice(list(DIRECTIONS.items()))[1]
-
-        # portal; move IP to coordinates
-        elif instruction == ".":
-            y, x = self._pop(), self._pop()
-            # IP cannot reach negative codebox
-            if x < 0 or y < 0:
-                raise Exception
-            self._position = [x, y]
-
-        # instruction is 0-9a-f, push corresponding hex value
-        elif instruction in NCHARS:
-            self._push(int(instruction, len(NCHARS)))
-
-        # instruction is an arithmetic operator
-        elif instruction in ARITHMETIC:
-            a, b = self._pop(), self._pop()
-            exec("self._push(b{}a)".format(instruction))
-
-        # division
-        elif instruction == ",":
-            a, b = self._pop(), self._pop()
-            # try converting them to floats for python 2 compability
-            try:
-                a, b = float(a), float(b)
-            except OverflowError:
+            if bool(stack.pop()):
                 pass
-            self._push(b / a)
-
-        # comparison operators
-        elif instruction in COMPARISON:
-            a, b = self._pop(), self._pop()
-            exec("self._push(1 if b{}a else 0)".format(COMPARISON[instruction]))
-
-        # turn on string mode
-        elif instruction in "'\"":  # turn on string parsing
-            self._string_mode = instruction
-
-        # skip one command
-        elif instruction == "!":
-            self._skip = True
-
-        # skip one command if popped value is 0
-        elif instruction == "?":
-            if not self._pop():
-                self._skip = True
-
-        # push length of stack
-        elif instruction == "l":
-            self._push(len(self._stack))
-
-        # duplicate top of stack
-        elif instruction == ":":
-            self._push(self._stack[-1])
-
-        # remove top of stack
-        elif instruction == "~":
-            self._pop()
-
-        # swap top two values
-        elif instruction == "$":
-            a, b = self._pop(), self._pop()
-            self._push(a)
-            self._push(b)
-
-        # swap top three values
-        elif instruction == "@":
-            a, b, c = self._pop(), self._pop(), self._pop()
-            self._push(a)
-            self._push(c)
-            self._push(b)
-
-        # put/get register
-        elif instruction == "&":
-            if self._register_stack[-1] == None:
-                self._register_stack[-1] = self._pop()
             else:
-                self._push(self._register_stack[-1])
-                self._register_stack[-1] = None
+                ifFalse
+            '''
 
-        # reverse stack
-        elif instruction == "r":
-            self._stack.reverse()
-
-        # right-shift stack
-        elif instruction == "}":
-            self._push(self._pop(), index=0)
-
-        # left-shift stack
-        elif instruction == "{":
-            self._push(self._pop(index=0))
-
-        # get value in codebox
-        elif instruction == "g":
-            x, y = self._pop(), self._pop()
-            self._push(self._codebox[x][y])
-
-        # set (put) value in codebox
-        elif instruction == "p":
-            x, y, z = self._pop(), self._pop(), self._pop()
-            self._codebox[x][y] = z
-
-        # pop and output as character
-        elif instruction == "o":
-            self._output(chr(int(self._pop())))
-
-        # pop and output as number
-        elif instruction == "n":
-            # print(self._pop)
-            n = self._pop()
-            # print(n)
-            # with open(outputpath, "w") as f:
-            #     f.write(1)
-                # f.close()
-
-            # print('*')
-            # print(f"Outputting number: {n}")
-            # try outputting without the decimal point if possible
-            self._output(outputpath ,int(n) if int(n) == n else n)
-            # self._output(outputpath ,n)
-            # print(output)
-
-        # get one character from input and push it
-        elif instruction == "i":
-            i = self._input(inputpath)
-            self._push(ord(i) if isinstance(i, str) else i)
-
-        # pop x and create a new stack with x members moved from the old stack
-        elif instruction == "[":
-            count = int(self._pop())
-            if count == 0:
-                self._stack_stack[-1], new_stack = self._stack, []
+            result += f"if bool({stack}.pop()):\n"
+            if Token.data[0] == "":
+                result += tab_format("pass")
             else:
-                self._stack_stack[-1], new_stack = self._stack[:-count], self._stack[-count:]
-            self._stack_stack.append(new_stack)
-            self._stack = new_stack
+                result += tab_format(transpile(command[0], stack))
 
-            # create a new register for this stack
-            self._register_stack.append(None)
+            if Token.data[1]:
+                result += "\nelse:\n"
+                result += tab_format(transpile(command[1], stack))
 
-        # remove current stack, moving its members to the previous stack.
-        # if this is the last stack, a new, empty stack is pushed
-        elif instruction == "]":
-            old_stack = self._stack_stack.pop()
-            if not len(self._stack_stack):
-                self._stack_stack.append([])
+        elif name == Parse.CMDS.FOR:
+
+            '''
+
+            (count|code) -->
+
+            count
+            for _ in loop_eval(stack.pop()):
+                code
+
+
+            (code) -->
+
+            length(stack)
+            for _ in loop_eval(stack.pop()):
+                code
+
+            '''
+
+            result += transpile(Token.data[0])
+            result += f"\nfor _ in loop_eval({stack}.pop()):"
+            result += "\n"
+
+
+
+            if Token.data[1] == "":
+                result += tab_format("pass")
             else:
-                self._stack_stack[-1] += old_stack
-            self._stack = self._stack_stack[-1]
+                result += tab_format(transpile(Token.data[1]))
 
-            # register is dropped
-            self._register_stack.pop()
-            if not len(self._register_stack):
-                self._register_stack.append(None)
+        elif name == Parse.CMDS.WHILE:
 
-        # the end
-        elif instruction == ";":
+            '''
+            {condition|code} -->
 
-            raise StopExecution()
+            for expr in condition: eval(expr)
+            while stack.pop():
+                code
+                for expr in condition: eval(expr)
 
-        # space is NOP
-        elif instruction == " ":
+
+            {code} -->
+
+            while 1:
+                code
+
+            '''
+
+            if Token.data[0]:
+                template = "for expr in {0}: eval(expr)\n"
+
+                functions = [] #Transpile all functions into a nice list
+                for function in transpile(Token.data[0]).split("\n"):
+                    functions.append(function)
+
+
+                result += template.format(functions)
+                result += f"while {stack}.pop():\n"
+            else:
+                result += "while 1:\n"
+
+            if not Token.data[1]:
+                result += tab_format("pass")
+            else:
+                result += tab_format(transpile(Token.data[1]))
+            result += "\n"
+
+            if Token.data[0]:
+                result += tab_format(template.format(functions))
+
+        elif name == Parse.CMDS.FUNCTION:
+            if command[0] == 1:
+                #Function call
+                result += command[1] + f"({stack})"
+            else:
+                result += "def " + command[0]["name"] + f"({stack}):\n"
+                result += "    temp = Stack()"
+                if command[0]["number"] == "!":
+                    result += f"\n    temp = {stack}.copy()"
+                else:
+                    result += "\n    for _ in range(" + str(command[0]["number"]\
+                    ) + "): "
+                    result += f"temp.push({stack}.pop())"
+                result += "\n" + tab_format(transpile(command[1], "temp"))
+                result += f"\n    for item in temp: {stack}.push(item)"
+
+        elif name == Parse.CMDS.VARIABLE:
+            if command[1] == "set":
+                result += f"var_set({stack}, '{command[0]}')"
+
+            else:
+                result += f"var_get({stack}, '{command[0]}')"
+
+        elif name == Parse.CMDS.SWITCH:
+            result += f"\nSWITCH_VARIABLE{lvl} = {stack}.pop()\n"
+            result += "for _ in range(1):\n"
+            for case in command:
+                if "default" in case:
+                    default = case[0][:]
+                    result += tab_format("else: \n")
+                    result += tab_format(tab_format(\
+                        f"{stack}.push(SWITCH_VARIABLE{lvl})"))
+                    result += tab_format(tab_format(transpile(default, lvl=lvl+1)))
+                    result += tab_format(tab_format("\nbreak\n"))
+                else:
+                    result += tab_format(transpile([case[0]], lvl=lvl+1) + "\n")
+                    result += tab_format(f"{stack}.push(SWITCH_VARIABLE{lvl})")
+                    result += tab_format(f"comparative({stack}, '=')")
+                    result += tab_format(f"if bool({stack}.pop()):\n")
+                    result += tab_format(tab_format(transpile(case[1:], lvl=lvl+1)))
+                    result += tab_format(tab_format("\nbreak\n"))
+
+
+        elif name == Parse.CMDS.MAP:
+            result += f"keg_map({stack}, {command})"
+
+        #Handle all functions (built-in)
+        elif command == LENGTH:
+            if args and args.lengthpops:
+                result += f"length({stack}, True)"
+            else:
+                result += f"length({stack})"
+
+        elif command == DUPLICATE:
+            result += f"duplicate({stack})"
+
+        elif command == POP:
+            result += f"pop_top({stack})"
+
+        elif command == PRINT_CHR:
+            result += f"nice({stack}); printed = True"
+
+        elif command == PRINT_INT:
+            result += f"raw({stack}); printed = True"
+
+        elif command in [L_SHIFT, R_SHIFT]:
+            result += f"shift({stack}, '" + ["left", "right"]\
+                      [[L_SHIFT, R_SHIFT].index(command)]+ "')"
+
+        elif command == REVERSE:
+            result += f"reverse({stack})"
+
+        elif command == RANDOM:
+            result += f"random({stack})"
+
+        elif command == SWAP:
+            result += f"swap({stack})"
+
+        elif command == INPUT:
+            result += f"Input({stack})"
+
+        #Now, for Reg's commands
+        elif command == IOTA:
+            result += f"iota({stack})"
+
+        elif command == DECREMENT:
+            result += f"decrement({stack})"
+
+        elif command == SINE:
+            result += f"sine({stack})"
+
+        elif command == NICE_INPUT:
+            result += f"nice_input({stack})"
+
+        elif command == EXCLUSIVE_RANGE:
+            result += f"excl_range({stack})"
+
+        elif command == INCLUSIVE_RANGE:
+            result += f"incl_range({stack})"
+
+        elif command == GENERATE_RANGE:
+            result += f"smart_range({stack})"
+
+        elif command == NUMBER_SPLIT:
+            result += f"item_split({stack})"
+
+        elif command == FACTORIAL:
+            result += f"factorial({stack})"
+
+        elif command == STRING_INPUT:
+            result += f"string_input({stack})"
+
+        elif command in INCREMENT:
+            result += f"increment({stack})"
+
+        elif command == DOUBLE:
+            result += f"double({stack})"
+
+        elif command == NEGATE:
+            result += f"negate({stack})"
+
+        elif command in ONE_ON_X:
+            result += f"reciprocal({stack})"
+
+        elif command in ROUND:
+            result += f"keg_round({stack})"
+
+        elif command in FILTER_BY:
+            result += f"keg_filter({stack})"
+
+        elif command == NOT:
+            result += f"""
+
+if bool({stack}.pop()):
+    {stack}.push(0)
+else:
+    {stack}.push(1)
+    """
+
+        elif command in AND:
+            result += f"""
+___lhs, ___rhs = {stack}.pop(), {stack}.pop()
+if bool(___lhs) and bool(___rhs):
+    {stack}.push(1)
+else:
+    {stack}.push(0)
+"""
+
+        elif command in OR:
+            result += f"""
+___lhs, ___rhs = {stack}.pop(), {stack}.pop()
+if bool(___lhs) or bool(___rhs):
+    {stack}.push(1)
+else:
+    {stack}.push(0)
+"""
+
+        #Now, operators.
+        elif command in MATHS:
+            if command == "Ë":
+                result += f"exponate({stack})"
+            else:
+                result += f"maths({stack}, '" + command + "')"
+
+        elif command in CONDITIONAL:
+            result += f"comparative({stack}, '{command}')"
+
+        elif command in NUMBERS:
+            result += f"integer({stack}, " + command + ")"
+
+        elif command == HALVE_TOP:
+            result += f"halve_top({stack})"
+
+
+
+        #Whitespace
+        elif command == TAB:
+            continue
+
+        elif command == NEWLINE:
+            if args and args.ignorenewlines:
+                pass
+            else:
+                result += f"integer({stack}, 10)"
+
+        #Keg+
+
+        elif command in PUSH_N_PRINT:
+            result += f"print('{ALPHA_MAP[PUSH_N_PRINT.index(command)]}', end='')"
+
+        elif command in [TO_INT, TO_FLOAT, TO_STRING, TO_STACK, TO_CHAR]:
+            result += f"try_cast({stack}, '{command}')"
+
+        elif command == SQUARE_OPERATOR:
+            result += f"square({stack})"
+
+        elif command == ALL_TRUE:
+            result += f"all_true{stack}"
+
+        elif command == ALL_EQUAL:
+            result += f"all_equal({stack})"
+
+        elif command == UPPER:
+            result += f"case_switch({stack}, 'upper')"
+
+        elif command == LOWER:
+            result += f"case_switch({stack}, 'lower')"
+
+        elif command == X_TO_BASE:
+            result += f"int2base({stack})"
+
+        elif command == TOGGLE:
+            result += f"case_switch({stack}, 'toggle')"
+
+        elif command == SUMMATE:
+            result += f"summate({stack})"
+
+        elif command == EMPTY:
+            result += f"empty({stack})"
+
+        elif command == PRINT_ALL:
+            result += f"print_all({stack})"
+
+        elif command == EVAL_EXEC:
+            result += f"keg_exec({stack})"
+
+        elif name == Parse.CMDS.INTEGER:
+            result += f"integer({stack}, {command})"
+
+        elif command == PERFORM_INDEX:
+            result += f"perform_index({stack})"
+
+        elif command == MULTILINE_INPUT:
+            result += f"multiline({stack})"
+
+        elif command in PRINT_RAW_NO_POP:
+            result += f"raw({stack}, True)"
+
+        elif command in PRINT_NICE_NO_POP:
+            result += f"nice({stack}, True)"
+
+        elif command in TO_PERCENTAGE:
+            result += f"to_percentage({stack})"
+
+        elif command in EMPTY_STRING:
+            result += f"iterable({stack}, \"\")"
+
+        elif command in SPACE_STRING:
+            result += f"iterable({stack}, \" \")"
+
+        elif command in LENGTH_TOP:
+            result += f"length_top({stack})"
+
+        elif command in REVERSE_TOP:
+            result += f"reverse_top({stack})"
+
+        elif command in POP_ITEM:
+            result += f"pop_item({stack})"
+
+        elif command in SORT_STACK:
+            result += f"sort_stack({stack})"
+
+        elif command in INCREMENT_REGISTER:
+            result += f"increment_register({stack})"
+
+        elif command in DECREMENT_REGISTER:
+            result += f"decrement_register({stack})"
+
+        elif command in PUSH_REGISTER_NO_EMPTY:
+            result += f"register_dont_empty({stack})"
+
+        elif command in REGISTER_AUG_ADD:
+            result += f"register_aug_assign({stack}, '+')"
+
+        elif command in REGISTER_AUG_SUB:
+            result += f"register_aug_assign({stack}, '-')"
+
+        elif command in REGISTER_AUG_MULT:
+            result += f"register_aug_assign({stack}, '*')"
+
+        elif command in REGISTER_AUG_DIV:
+            result += f"register_aug_assign({stack}, '/')"
+
+        elif command in REGISTER_SET:
+            result += f"set_register_dont_empty({stack})"
+
+        elif command in REGISTER_LENGTH:
+            result += f"register_length({stack})"
+
+        elif command in REGISTER_REVERSE:
+            result += f"reverse_register({stack})"
+
+        elif command in TRUTHY:
+            result += f"truthify({stack})"
+
+
+
+        #Default case
+
+        else:
+            result += f"character({stack}, '" + command + "')"
+
+        result += ("\n")
+
+    return result.rstrip("\n")
+
+if __name__ == "__main__":
+    '''print(unicode)
+    '''
+
+
+
+    if len(sys.argv) > 1:
+        import argparse
+        parser = argparse.ArgumentParser()
+        parser.add_argument("file", help="The location of the Keg file to open")
+        parser.add_argument('-ex', '--explain',
+                            help="Explains given source", action='store_true')
+        parser.add_argument("-cm", "--compiled",
+                            help="Shows the compiled code", action='store_true')
+
+        #Custom Keg flags
+        #-hd --head : prints only the head of the stack upon finishing
+
+        parser.add_argument("-hd", "--head",
+                            help="Only prints the top item",
+                            action='store_true')
+
+        #-no --newoutput : prints everything 'as-is'/no conversion of ints to
+        #chars
+
+        parser.add_argument("-no", "--newoutput",
+                    help="Prints everything 'as-is'",
+                    action='store_true')
+
+        #-hr --headraw : prints only the top of stack raw
+
+        parser.add_argument("-hr", "--headraw",
+            help="Only prints the top item raw",
+            action='store_true')
+
+        #-rr --reverseraw : reverse then perform -hr
+
+        parser.add_argument("-rr", "--reverseraw",
+            help="Reverse stack then -rr",
+            action='store_true')
+
+        #-rn --reversenice : reverse then perform -hd
+
+        parser.add_argument("-rn", "--reversenice",
+            help="Reverse stack then -rd",
+            action='store_true')
+
+        #-ir --inputraw : implicit input uses ? not ¿
+
+        parser.add_argument("-ir", "--inputraw",
+            help="Make implicit input _not_ evaluate everything",
+            action='store_true')
+
+        #-oc --outputcharacters : Output everything as characters if possible
+        parser.add_argument("-oc", "--outputcharacters",
+            help="Output _everything_ as characters if possible",
+            action='store_true')
+
+        #-lp --lengthpops : Length pops if the stack has 0 items
+        parser.add_argument("-lp", "--lengthpops",
+            help="Length (!) pops if the stack has 0 items",
+            action='store_true')
+
+        #-in --ignorenewlines : newlines DON'T push 10
+
+        parser.add_argument("-in", "--ignorenewlines",
+            help="newlines DON'T push 10",
+            action='store_true')
+
+        #-pr --printregister  : print the register instead of the stack
+        parser.add_argument("-pr", "--printregister",
+            help="print the register instead of the stack at EOE",
+            action='store_true')
+
+        #-rR --registerraw  : print the register instead of the stack
+        parser.add_argument("-rR", "--registerraw",
+            help="print the register instead of the stack at EOE",
+            action='store_true')
+
+
+        #-pn --printnewlines : printing puts a newline between outputs
+        parser.add_argument("-pn", "--printnewlines",
+            help="printing puts a newline between outputs",
+            action='store_true')
+
+        #-rt --reversetokens : reverse token order
+
+        parser.add_argument("-rt", "--reversetokens",
+            help="reverse token order internally",
+            action='store_true')
+
+
+        #-rs --reversestack : reverse stack before outputting
+
+        parser.add_argument("-rs", "--reversestack",
+            help="reverse stack before outputting implicitly",
+            action='store_true')
+
+        #-v --version : Prints when the interpreter was last updated
+
+        parser.add_argument("-v", "--version",
+            help="Prints when the interpreter was last updated",
+            action='store_true')
+        
+        # -b --bytes : Treats input file as raw bytes
+        parser.add_argument("-b", "--bytes",
+            help="This is mainly for SBCS purposes and to show that there truly is a codepage.",
+            action='store_true')
+
+        args = parser.parse_args()
+        file_location = args.file
+
+        if args.explain:
+            source = open(file_location, encoding="utf-8").read().strip("\n")
+            i = 0
+            for char in source:
+                if char in DESCRIPTIONS:
+                    print(" "*i + char + " "*(len(source) - i) + "#",
+                          DESCRIPTIONS[char])
+                else:
+                    print(" "*i + char + " "*(len(source) - i) + "#",
+                          "Push", char, "onto the stack")
+                i += 1
+            exit()
+
+        elif args.version:
+            print("Keg Last Updated On: Wednesday 15 January 2020")
+        
+    else:
+        file_location = input("Enter the file location of the Keg program: ")
+        args = 0
+
+    if args.bytes:
+        source = open(file_location, "rb").read()
+        source = uncompress.keg_to_utf8(code)
+    else:
+        source = open(file_location, encoding="utf-8").read()
+
+
+
+    code = source
+    code_page = ""
+    import string
+    unicode_set = set(unicode) - set(string.printable)
+    if any([char in unicode_set for char in source]):
+        code_page = unicode
+
+    #print(code_page)
+    import KegLib, Coherse
+    Stackd.code_page = code_page
+    KegLib.code_page = code_page
+    Coherse.code_page = code_page
+
+    code = preprocess.process(code); #print("After preprocess:", code)
+    code = preprocess.balance_strings(code);
+    code = uncompress.Uncompress(code); #print("After uncom:", code)
+    code += "\t"
+
+    header = """
+from KegLib import *
+from Stackd import Stack
+stack = Stack()
+printed = False
+"""
+
+    footer = ""
+    if args and args.inputraw:
+        Stackd.input_raw = True
+
+    if args and args.printnewlines:
+        KegLib.seperator = "\n"
+
+    #Conditionally determine the footer
+
+    if args and args.reversestack:
+        footer = "\nreverse(stack)\n"
+
+    if args and args.head:
+        footer += """
+if not printed:
+    nice(stack)
+"""
+
+    elif args and args.newoutput:
+        footer += """
+if not printed:
+    for item in stack[::-1]:
+        if type(item) in [str, KegLib.Coherse.char]:
+            nice(stack)
+        else:
+            raw(stack)"""
+
+    elif args and args.headraw:
+        footer += """
+if  not printed:
+    raw(stack)
+"""
+
+    elif args and args.reverseraw:
+        footer += """
+if not printed:
+    reverse(stack)
+    raw(stack)
+"""
+
+    elif args and args.reversenice:
+        footer += """
+if not printed:
+    reverse(stack)
+    nice(stack)
+"""
+
+    elif args and args.outputcharacters:
+        footer += """
+if not printed:
+    for item in stack:
+        if type(item) in [int, float]:
+            print(chr(int(item)), end="")
+        else:
+            print(str(item), end="")
+"""
+
+    elif args and args.printregister:
+        footer += """
+if not printed:
+    register(stack)
+    nice(stack)
+
+"""
+    elif args and args.registerraw:
+        footer += """
+if not printed:
+    register(stack)
+    raw(stack)
+
+"""
+
+    else:
+        footer += """
+
+if not printed:
+    printing = ""
+    for item in stack:
+        if type(item) in [Stack, list]:
+            printing += str(item)
+
+        elif type(item) is str:
+            printing += custom_format(item)
+        elif type(item) == Coherse.char:
+            printing += item.v
+
+        elif item < 10 or item > 256:
+            printing += str(item)
+        else:
+            printing += chr(item)
+    print(printing, end="")
+"""
+    #print(code, balance(code))
+    code = transpile(balance(code))
+    if args and args.compiled:
+        import sys
+        sys.stderr.write("-----\nTranspiled Code:")
+        full = header + code + footer
+        sys.stderr.write(full)
+        sys.stderr.write("-----\n")
+
+
+    #First, load the BFL
+
+    import os
+
+    prepend = os.path.dirname(__file__)
+    source = open(prepend + "/docs/BFL.keg", encoding="utf-8").read()
+    exec(header + transpile(source))
+
+
+
+    if code.strip():
+        exec(header + code + footer)
+    else:
+        try:
+            print(input())
+        except:
             pass
 
-        # invalid instruction
-        else:
-            raise Exception("Invalid instruction", instruction)
+def signal_handler(signum, frame):
+    """Handles timeout signals."""
+    raise TimeoutError("Execution timeout reached.")
 
-    def _push(self, value, index=None):
-        """
-        Push a value to the current stack.
-        Keyword arguments:
-            index -- the index to push/insert to. (default: end of stack)
-        """
-        self._stack.insert(len(self._stack) if index == None else index, value)
+signal.signal(signal.SIGTERM, signal_handler)
 
-    def _pop(self, index=None):
-        """
-        Pop and return a value from the current stack.
-        Keyword arguments:
-            index -- the index to pop from (default: end of stack)
-        """
-        # don't care about exceptions - they are handled at a higher level
-        value = self._stack.pop(len(self._stack) - 1 if index == None else index)
-        # convert to int where possible to avoid float overflow
-        if value == int(value):
-            value = int(value)
-        # print(value)
-        return value
-
-    def _input(self, inputpath):
-        """
-        Return an inputted character.
-        """
-        # return read_character()
-        # inputpath = 'input.txt'
-        with open(inputpath, 'r') as f:
-            char = f.read()
-            char = int(char)
-        return char if char != "" else -1
-
-    def _output(self, outputpath, output):
-        """
-        Output a string without a newline appended.
-        """
-        # output = str(output)
-        try:
-            # self._newline = output.endswith("\n")
-            with open(outputpath, "a") as f:  # Use "a" mode to append to the output file
-                f.write(str(output))
-        except Exception as e:
-            print(f"Error writing output to {outputpath}: {e}")
-        # with open(outputpath, 'r') as f:
-        #     char = f.read()
-        # print(char)
-            # char = int(char)
-        # print(output)
-        # print(type(output))
-        #     print(type(output))
-        # print(output)
-        # sys.stdout.write(output)
-        # sys.stdout.flush()
-
-    # def run(self):
-    #     try:
-    #         while True:
-    #             # try:
-    #             instr = self.move()
-    #     except StopExecution as stop:
-    #         # only print a newline if the script didn't
-    #         newline = ("\n" if (not self._newline) and self._newline != None else "")
-    #         sys.exit()
-
-
-class StopExecution(Exception):
-    """
-    Exception raised when a script has finished execution.
-    """
-
-    def __init__(self, message=None):
-        self.message = message
-
-
-# if __name__ == "__main__":
-# import argparse
-
-# parser = argparse.ArgumentParser(description="""
-# Execute a ><> script.
-# Executing a script is as easy as:
-#     %(prog)s <script file>
-# You can also execute code directly using the -c/--code flag:
-#     %(prog)s -c '1n23nn;'
-#     > 132
-# The -v and -s flags can be used to prepopulate the stack:
-#     %(prog)s echo.fish -s "hello, world" -v 32 49 50 51 -s "456"
-#     > hello, world 123456""", usage="""%(prog)s [-h] (<script file> | -c <code>) [<options>]""",
-# formatter_class=argparse.RawDescriptionHelpFormatter)
-
-# group = parser.add_argument_group("code")
-# # group script file and --code together to only allow one
-# code_group = group.add_mutually_exclusive_group(required=True)
-# code_group.add_argument("script",
-#                         type=argparse.FileType("r"),
-#                         nargs="?",
-#                         help=".fish file to execute")
-# code_group.add_argument("-c", "--code",
-#                         metavar="<code>",
-#                         help="string of instructions to execute")
-
-# options = parser.add_argument_group("options")
-# options.add_argument("-s", "--string",
-#                      action="append",
-#                      metavar="<string>",
-#                      dest="stack")
-# options.add_argument("-v", "--value",
-#                      type=float,
-#                      nargs="+",
-#                      action="append",
-#                      metavar="<number>",
-#                      dest="stack",
-#                      help="push numbers or strings onto the stack before execution starts")
-# options.add_argument("-t", "--tick",
-#                      type=float,
-#                      default=0.0,
-#                      metavar="<seconds>",
-#                      help="define a tick time, or a delay between the execution of each instruction")
-# options.add_argument("-a", "--always-tick",
-#                      action="store_true",
-#                      default=False,
-#                      dest="always_tick",
-#                      help="make every instruction cause a tick (delay), even whitespace and skipped instructions")
-
-# # parse arguments from sys.argv
-# arguments = parser.parse_args()
-
-# initialize an interpreter
-# if arguments.script:
-#     code = arguments.script.read()
-#     arguments.script.close()
-# else:
 def run(code, inputpath, outputpath, Q):
-    # with open(codepath, 'r') as f:
-    #     code = f.readlines()
+    import sys
+    import os
+    # ...existing code...
+    original_stdin = sys.stdin
+    original_stdout = sys.stdout
 
-    # add supplied values to the interpreters stack
-    # if arguments.stack:
-    #     for x in arguments.stack:
-    #         if isinstance(x, str):
-    #             interpreter._stack += [float(ord(c)) for c in x]
-    #         else:
-    #             interpreter._stack += x
-    interpreter = Interpreter(code, inputpath, outputpath, Q)
     try:
-        while True:
-            # try:
-            instr = interpreter.move(inputpath, outputpath, Q)
-            # print('*')
-    except StopExecution as stop:
-        # print("*")
+        sys.stdin = open(inputpath, 'r')
+        sys.stdout = open(outputpath, 'w')
+
+        # Prepare the Keg interpreter environment
+        code = code.strip()
+        code_page = ""
+        import KegLib, Coherse
+        Stackd.code_page = code_page
+        KegLib.code_page = code_page
+        Coherse.code_page = code_page
+
+        code = preprocess.process(code)
+        code = preprocess.balance_strings(code)
+        code = uncompress.Uncompress(code)
+        code += "\t"
+
+        header = """
+from KegLib import *
+from Stackd import Stack
+stack = Stack()
+printed = False
+"""
+        footer = """
+if not printed:
+    printing = ""
+    for item in stack:
+        if type(item) in [Stack, list]:
+            printing += str(item)
+        elif type(item) is str:
+            printing += custom_format(item)
+        elif type(item) == Coherse.char:
+            printing += item.v
+        elif item < 10 or item > 256:
+            printing += str(item)
+        else:
+            printing += chr(int(item))
+    print(printing, end="")
+"""
+        code_to_exec = header + transpile(balance(code)) + footer
+        exec(code_to_exec, globals(), locals())
+
         Q.put("ANSWER WRITTEN")
-        # only print a newline if the script didn't
+    except Exception as e:
+        Q.put('RUNTIME ERROR')
+    finally:
+        sys.stdin.close()
+        sys.stdout.close()
+        sys.stdin = original_stdin
+        sys.stdout = original_stdout
 
-        newline = ("\n" if (not interpreter._newline) and interpreter._newline != None else "")
-        sys.exit()
 
-        # if instr and not instr == " " or arguments.always_tick:
-        # if instr and not instr == " ":
-        #     time.sleep()
-    # except KeyboardInterrupt:
-    #     # exit cleanly
-#     #     parser.exit(message="\n")
-# if __name__ == "__main__":
-#     import multiprocessing as mp
-#     import filecmp
-#     Q = mp.Queue()
-#     with open('/home/saiganesh/Desktop/E-Contest/E-Contest/app/code.txt', 'r') as f:
-#         code = f.read()
-#     outputpath = '/home/saiganesh/Desktop/E-Contest/E-Contest/app/output/output.txt'
-#     run(code,inputpath,outputpath,Q)
-#     with open(outputpath, 'r') as f:
-#         output_content = f.read()
-#     print("Output Content:")
-#     print(output_content)
-#
-#     with open('/home/saiganesh/Desktop/E-Contest/E-Contest/app/evaluation/expected_output/qn1/output-1.txt', 'r') as f:
-#         expected_content = f.read()
-#     print("\nExpected Content:")
-#     print(expected_content)
-#
-#     if filecmp.cmp(outputpath, '/home/saiganesh/Desktop/E-Contest/E-Contest/app/evaluation/expected_output/qn1/output-1.txt'):
-#         print('*')
-#     else:
-#         print('*')
+
+
+
 
 
