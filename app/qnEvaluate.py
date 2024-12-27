@@ -57,8 +57,10 @@ def score(code, qn_no, pno):
                         return f"Expected output file {expected_output_file} is missing or empty"
                     
                     if filecmp.cmp(outputfilePath, expected_output_file):
+                        print('Correct Answer')
                         pass  # Correct answer
                     else:
+                        print('Wrong Answer')
                         return 'WRONG ANSWER'
                 else:
                     mfile.close()
