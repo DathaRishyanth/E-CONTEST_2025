@@ -13,6 +13,7 @@ def score(code, qn_no, pno):
     
     # Check if the input directory exists
     if not os.path.exists(inputPath):
+        print(inputPath)
         return "Input directory does not exist"
 
     for filename in os.listdir(inputPath):
