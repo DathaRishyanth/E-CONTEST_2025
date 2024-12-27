@@ -8,12 +8,20 @@ Input:
 A single string S , where ∣S∣ is the length of the string.
 
 Output:
-Print the mean of the ASCII values of the characters in S as a floating-point number rounded to 3 decimal places.
+Print the sum of the ASCII values of the characters in S multiplied by the number of digits in the given string.
 
 CONSTRAINTS:
     1 ≤ |S| ≤ 1000
 
 EXAMPLE:
     INPUT  :   DOG
-    OUTPUT :   72.667
+    OUTPUT :   654  
+
+    EXPLANATION:
+        Sum of ascii values of DOG = 218
+        Number of characters in the string |S| = 3
+        Therefore, output = 218*3 
+                          =  654
+    
+
 
