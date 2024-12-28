@@ -1,4 +1,4 @@
-                                                        SUM OF ASCII
+                                                        MEAN LEN SQAURED
 
 
 You are given a string S consisting of uppercase or lowercase English letters. Your task is to calculate and print the mean of the ASCII values of the characters in the string.
@@ -11,7 +11,7 @@ Output:
 Print the sum of the ASCII values of the characters in S multiplied by the number of digits in the given string.
 
 CONSTRAINTS:
-    1 ≤ |S| ≤ 1000
+    1 ≤ |S| ≤ 10^3
 
 EXAMPLE:
     INPUT  :   DOG

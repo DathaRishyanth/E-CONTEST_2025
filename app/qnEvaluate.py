@@ -60,6 +60,13 @@ def score(code, qn_no, pno):
                         print('Correct Answer')
                         pass  # Correct answer
                     else:
+                        #print the text in output file and expected output file
+                        with open(outputfilePath, 'r') as ofile:
+                            output = ofile.read()
+                        with open(expected_output_file, 'r') as efile:
+                            expected = efile.read()
+                        print('Output file:', output)
+                        print('Expected file:', expected)
                         print('Wrong Answer')
                         return 'WRONG ANSWER'
                 else:

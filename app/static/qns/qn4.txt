@@ -10,7 +10,7 @@ OUTPUT:
 Print YES if the string is a palindrome, otherwise print NO.
 
 CONSTRAINT:
-    1 ≤ |S| ≤ 1000
+    1 ≤ |S| ≤ 10^3
 
 EXAMPLE:
     INPUT   :   rotator

@@ -1,12 +1,12 @@
                                                 Maximum Effort: The Array Edition
 
-You are given an array of positive integers ending with -1(one integer in each line). The value -1 indicates the 
+You are given an array of positive integers ending with -1(one element in each line). The value -1 indicates the 
 end of the input and should not be considered as part of the array.Print the maximum integer in the array.
 
 
 CONSTRAINTS:
-    i)  1 ​≤ N ​≤ 1000 , Where N is the size of the array
-    ii) 1 ​≤ Ai ​≤ 1000 , Where Ai is the ith element of the array.
+    i)  1 ​≤ N ​≤ 10^3 , Where N is the size of the array
+    ii) 1 ​≤ Ai ​≤ 10^3 , Where Ai is the ith element of the array.
 
 EXAMPLE:
     INPUT    :    2

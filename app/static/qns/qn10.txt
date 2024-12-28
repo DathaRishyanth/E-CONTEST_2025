@@ -2,11 +2,11 @@
                                                 
 You are given an array of integers(One element in each line). The array ends with the value -1, which should not be considered as part of 
 the array. For each element in the array, find the nearest element to its left that is smaller than the current 
-element. If no such element exists, print the element itself.
+element. If no such element exists, print the element itself seperated by spaces.
 
 CONSTRAINTS:
-    i)  1 ​≤ N ​≤ 1000 , Where N is the size of the array
-    ii) 1 ​≤ Ai ​≤ 1000 , Where Ai is the ith element of the array.
+    i)  1 ​≤ N ​≤ 10^3 , Where N is the size of the array
+    ii) 1 ​≤ Ai ​≤ 10^3 , Where Ai is the ith element of the array.
 
 EXAMPLE:
     INPUT    :    2

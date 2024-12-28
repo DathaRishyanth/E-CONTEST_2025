@@ -1,12 +1,12 @@
                                                         Digitally Summed Up!
 
-You are given a natural number N as input. Print "1" if the sum of the digits equals to 6, else print "0".
+You are given a natural number N as input. Print "1" if the sum of the digits equals to 7, else print "0".
 
 CONSTRAINT:
-    1 ≤ N ≤ 1000
+    1 ≤ N ≤ 10^3
 
 Example:
-    INPUT   :   123
+    INPUT   :   124
     OUTPUT  :   1
 
     INPUT   :   2025

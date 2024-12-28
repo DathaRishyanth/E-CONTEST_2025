@@ -1,15 +1,11 @@
                                                     FIBONACCI NUMBER
 
-Given an integer n, output the nth Fibonacci number. 
+Given an integer n, Print the nth Fibonacci number. 
 
-
-
-Constraints:
+CONSTRAINTS:
   1 ≤ N ≤ 10^3
 
-
-
-  Example:
+EXAMPLE:
 	INPUT    :  5
 	OUTPUT   :  3
 

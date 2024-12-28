@@ -1,14 +1,14 @@
                                                     Aliquot Sum
 
 Given a positive integer n, Print its aliquot sum. 
-The aliquot sum of a number is the sum of all its proper divisors, that is, all divisors of n excluding n itself. 
+The aliquot sum of a number is the sum of all its proper divisors,i.e, all divisors of n excluding itself. 
 
 CONSTRAINT:
-    1 ​≤ N ​≤ 1000
+    1 ​≤ N ​≤ 10^3
 
 EXAMPLE:
     INPUT  :  6
     OUTPUT :  6
 
-    INPUT  :  5
-    OUTPUT :  1
+    INPUT  :  4
+    OUTPUT :  3

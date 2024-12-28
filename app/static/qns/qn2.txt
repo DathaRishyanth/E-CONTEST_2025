@@ -1,13 +1,11 @@
                                                     ASCII IN BINARY
 
-You are given a single character as input. Print its 8-bit binary representation.
+You are given a natural number(N) as input. Print its 8-bit binary representation.
 
-Constraints : 
-    The input is a single ASCII character
+CONSTRAINTS : 
+    1 ≤ N ≤ 10^3
 
-Example :
-    INPUT   :   D
-    OUTPUT  :   01000100
+EXAMPLE :
+    INPUT   :   16
+    OUTPUT  :   00010000
 
-    INPUT   :   a
-    OUTPUT  :   011000010
