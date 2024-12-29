@@ -470,7 +470,10 @@ def submissions() :
 
 	return render_template('submissions.html',name = session['username'],submissions = subs,to_time = time.strftime,to_ttuple = time.gmtime)
 
-if __name__ == "__main__":
-    with app.app_context():
-        db.create_all()
-    app.run(debug=True)
+# if __name__ == "__main__":
+#     with app.app_context():
+#         db.create_all()
+#     app.run(debug=True)
+
+if __name__ == '__main__':
+      app.run(host='0.0.0.0', port=80)
