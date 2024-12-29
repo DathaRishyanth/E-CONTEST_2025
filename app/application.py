@@ -27,15 +27,15 @@ app.secret_key = 'Thisisnottobesharedtoanyone'
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=6)
 
-# ENV = 'PROD'
-ENV = 'dev'
+ENV = 'PROD'
+# ENV = 'dev'
 if ENV == 'dev' :
 	app.debug = True
 	#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 	app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:root@localhost:5432/e-contest'
 else :
 	app.debug = False
-	app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://mszgdrmqiddjvp:1a9d8910173e936e5392a3e9593398505f81181e523cd0ddb5a2d0d9e340f84f@ec2-23-20-224-166.compute-1.amazonaws.com:5432/d7ljggvkk2q49e'
+	app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://econtest_owner:oDg0r2TGQYkB@ep-raspy-rice-a5c930s1.us-east-2.aws.neon.tech/econtest?sslmode=require'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
