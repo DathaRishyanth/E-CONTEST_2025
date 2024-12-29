@@ -2,203 +2,138 @@
                                                         KEG SYNTAX SHEET
 
 
-Welcome to Shaastra’s Esolang contest (that's what the 'E' stands for)!
+Welcome to Shaastra’s Esolang (Esoteric language) contest (that's what the 'E' stands for)!
 As the name suggests, you will solve questions using an esoteric programming language. This year’s chosen language is KEG!
 
 ***NOTE***: You can view this sheet anytime during the contest, so use your time wisely.
 
 ---
-
-KEG Syntax Sheet
-
-Data Types
-- Integers: Represented as sequences of digits, e.g., 123.
-- Strings: Enclosed in double quotes, e.g., "Hello".
-- Arrays: Comma-separated values enclosed in square brackets, e.g., [1, 2, 3].
+Introduction 
+KEG is a stack-based programming language, where all operations revolve around a stack. User inputs and computation results are stored 
+at the top of the stack. The language provides various stack manipulation methods using specific special characters. Additionally, 
+KEG supports loops and functions, enhancing its versatility. Characters are represented by their ASCII values within the stack, 
+enabling operations like A + D, as they operate on the ASCII values of the characters. Simple programs in KEG are written in a single line.
 
 ---
-
 Basic Operations
-| Operator | Description                                                                                      | Example         |
-|----------|--------------------------------------------------------------------------------------------------|-----------------|
-| +        | Adds numbers or concatenates strings/arrays.                                                     | 2 3 + → 5       |
-| -        | Subtracts the top stack element from the second.                                                 | 5 2 - → 3       |
-| *        | Multiplies numbers; repeats strings/arrays if combined with an integer.                          | 2 "Hi" * → HiHi |
-| /        | Divides the second stack element by the top.                                                     | 6 3 / → 2       |
-| %        | Computes remainder when the second stack element is divided by the top.                          | 5 3 % → 2       |
+
+note:-
+1)make sure to not leave any white spaces in the code as these are pushed into the stack as its ascii value 
+2)boolean values can be evaluated by if-else block and the while loop
+
+consider a stack of 2 elements with element x at the top and y at the bottom 
+example code and explanation :- 23+ first pushes 2 to the stack then 3 is pushed on top of the stack( x = 3 and y = 2) and then 2 and 3 are popped out and 5 is placed at the top 
+of the stack
+
+| Operator | Description                                                                                      | Example               |
+|          |                                                                                                  | y x operator → output |
+|----------|--------------------------------------------------------------------------------------------------|-----------------------|
+|     +    | Pops x and y and pushes y + x to the top of the stack                                            | 2 3 +        → 5      |
+|     -    | Pops x and y and pushes y - x to the top of the stack                                            | 5 2 -        → 3      |
+|     *    | Pops x and y and pushes y * x to the top of the stack                                            | 4 3 *        → 12     |
+|     /    | Pops x and y and pushes y / x to the top of the stack as a float                                 | 6 3 /        → 2.0    |
+|     %    | Pops x and y and pushes y %(modulo) x                                                            | 5 3 %        → 2      |
+|  > or <  | Pops x and y and pushes y > x or y < x as boolean value (1=True,0=False)                         |                       |
+|     =    | Pops x and y and pushes y == x in the stack as a boolean value (1=True,0=False)                  |                       |
 
 ---
 
 Stack Manipulation
-| Operator | Description                              | Example            |
-|----------|------------------------------------------|--------------------|
-| :        | Duplicates the top stack element.        | 5 : → [5, 5]       |
-| \        | Swaps the top two elements.              | 1 2 \ → [2, 1]    |
-| ;        | Removes the top stack element.           | 3 5 ; → [3]        |
-| @        | Rotates the top three elements.          | 1 2 3 @ → [3, 1, 2]|
-
+top of the stack is towards the left [1,2,3] here 1 is at the top 
+| Operator | Description                                                        | Example            |
+|----------|--------------------------------------------------------------------|--------------------|
+|   :      | Duplicates the top stack element.                                  | [5] : → [5, 5]     |
+|    $     | Swaps the top two elements.                                        | [1,2] $ → [2, 1]   |
+|   "      | Right shifts the stack (Put the top of the stack to the bottom)    | [1,2,3] → [2,3,1]  |
+|   '      | Left shifts the stack (Put the bottom of the stack to the top)     | [1,2,3] → [3,2,1]  |
+|   !      | Pushes the length of the stack onto the stack                      | [1,2,9] → [3,1,2,9]| # length of the stack is 3
+|   ^      | Reverses the stack                                                 | [1,2,3] → [3,2,1]  |
+|   ;      | Decrements the top of the stack                                    |                    |
 ---
 
 Input/Output
+
+1)when HELLO is added to the stack, each character is pushed into the stack one by one and the length of the stack is 5 and not 1
+2)? or ¿ preserves the order of input ie if the input taken by ? is HELLO, H is at the top of the stack but when you add HELLO manually in the code
+O is the top of the stack
+
 | Operator | Description                                  | Example                                                   |
 |----------|----------------------------------------------|-----------------------------------------------------------|
-| .        | Prints the top stack element (raw).          | 123 . → Prints 123.                                       |
-| ,        | Prints the top stack element (nicely).       | [1,2] , → Prints [1, 2].                                  |
-| ~        | Pushes a random number onto the stack.       | ~ . → Prints a random number.                            |
-| ?        | Reads a string from input and pushes it.     | If input is "Hello", ? . → Prints Hello.                 |
-| ¿        | Reads an integer from input and pushes it.   | If input is 42, ¿ . → Prints 42.                         |
+| .        | Prints the top stack element (int or float). | . on stack [a,b,3] → Prints ascii value of a              |
+| ,        | Prints the top stack element (char).         | , on stack [1,2,3] → Prints A                             |
+| ?        | Reads the input as charecters and pushes to the stack | If input is "Hello", ? . → Prints Hello. not olleH|
+| ¿        | Reads an integer from input and pushes it.   | If input is 42, ¿ . → Prints 42.                          |
 
 ---
 
-Control Flow
-Conditionals
-| Syntax   | Description                                  | Example                                                         |
-|----------|----------------------------------------------|-----------------------------------------------------------------|
-| ?[...]   | Executes the block if the top element is truthy. | 5 ?[1 .] → Prints 1.                                           |
-| ?[...|...] | If truthy, executes first block; else, the second block. | 0 ?[1 .|2 .] → Prints 2.                                       |
+Control Flow (IF-ELSE Block)
+The program enters into the if condition is the top of the stack is nonzero (any number or charecter other than zero ) and else block 
+if the top of the stack is zero.
+
+| Syntax     | Description                                              | Example                                                         |
+|------------|----------------------------------------------------------|-----------------------------------------------------------------|
+| [...]      | Executes the block if the top element is truthy.         | input:-5, code:-?[1.] → Prints 1 as top of the stack is non zero|                                           |
+| ?[...|...] | If truthy, executes first block; else, the second block. | input:-0, code:-?[1.|2.] → Prints 2 (else case)                 | 
+
+example code:-¿2%1=[ddo,,,|neve,,,,]
+explanation:- 
+1)here ¿ takes an integer input say x, then 2 is added on top of the stack
+2)% operator evaluates x%2 and pushes the result onto the stack, 
+3)1 is added to the top of the stack , = operatator adds the result of x%2==1 to the top of the stack, if it evaluates to True(1) then "odd" 
+is printed ( d is pused into the stack first and printed out last, as stack is FILO ). If it evaluates False(0) then "even" is printed 
+code to print "Buzz" :- zzuB(4|,) here 4 charecters are put into the stack and a for loop is run to print "Buzz"
+                           
 
 Loops
-| Syntax       | Description                                | Example                                                      |
-|--------------|--------------------------------------------|--------------------------------------------------------------|
-| [...]        | Executes as long as the top element is truthy. | 5 :[1 - . ;] → Prints 4, 3, 2, 1.                          |
-| (...)        | Iterates a fixed number of times.           | 5 (2 .) → Prints 2, 2, 2, 2, 2.                            |
+1) for loop 
+syntax:- (∆...1|∆ ...2)
+When a for loop is run, if ∆...1 is present, it will be evaluated as used as the number of times the loop will be run 
+(if it isn’t given, the element at the top of the stack will be used). ∆...2 is the body of the for loop, which will be executed.
 
+For Loop Example:-Print "Hi" 3 times: 3(|iH ,,,) or (3|iH ,,,)
+
+# Output: Hi Hi Hi
+in the first code 3(|iH ,,,) 3 which is at the top of the stack is used as the condition for the loop 
 ---
-
-Functions
-- Definition: Functions are defined with @ and ;. 
-- Call: A function is called with its name.
+2) while Loops
+syntax:- { ∆...1|∆ ...2}
+When a while loop is run,∆...1 (if given) will be the condition of the loop (if it isn’t present, 1 will be used as the condition of 
+the loop) and ∆...2 will be executed until the given condition is false.
 
 Example:
-@add 2 + ;  # Define a function `add` that adds 2 to the top stack element.
-5 add .      # Output: 7
+Factorial using while loop
+    1¿:{0>|:"*'1-:}'.
 
----
+Explanation:
+Input the Number: Take the number n as input and duplicate it for tracking.
+Push to Bottom: Duplicate n again and push it to the bottom of the stack to preserve the original value for later use.
+Initialize Product: Set a variable product (initially 1) to store the running factorial value.
+Multiply: Multiply the current number n (top of the stack) with product, accumulating the factorial value.
+Return from Bottom: Bring the preserved n (from the bottom of the stack) back to the top for the next iteration.
+Decrement n: Reduce n by 1 and repeat the process.
+Repeat Until n=0: Continue pushing, multiplying, returning, and decrementing until n becomes 0.
+Result: The product variable contains the factorial n! when the loop ends.
+
+
+
 
 Examples
 Factorial
-¿ : 1 [ * ; 1 - : ] \
-.
+1¿:(|:"*'1-)$.
+explanation
+1)here the number taken as input will be multiplied by 1 and then decresed till we get the factorial
+2)is x is the input [x,1] becomes [x,x,1] and the top most x is used as the condition for the for loop
+3)the loop runs x no of times and these are the operations it does :"*'1- and the stack is modified as follows 
+[x,1]->[x,x,1]->[x,1,x]->[1*x,x]->[x,1*x]->[x-1,x*1] in the next loop the stack changes to [x-2,1*x*(x-1)] and so on 
+untill we get the factorial 
+
 # Input: 5
 # Output: 120
 
-While Loop Example
-Print numbers from 5 down to 1:
-5 [ . ; 1 - : ]
-# Output: 5 4 3 2 1
-
-For Loop Example
-Print "Hi" 3 times:
-3 ("Hi" . )
-# Output: Hi Hi Hi
-
-Random Number Example
-Generate and print 5 random numbers:
-5 [ ~ . ; 1 - : ]
-
----
-
-Advanced Operators
-| Operator   | Description                                     | Example                                    |
-|------------|-------------------------------------------------|--------------------------------------------|
-| =          | Checks equality of two top elements.           | 3 3 = → 1                                 |
-| !          | Pushes the length of the stack.                | 1 2 3 ! → 3.                              |
-| ^          | Reverses the stack.                            | 1 2 3 ^ → [3, 2, 1].                      |
-| °          | Accesses an array element by index.            | [1,2,3] 2 ° . → Prints 3.                 |
-
-Unique Commands
-| Symbol | Description                             |
-|--------|-----------------------------------------|
-| ±      | Negates the top stack element.          |
-| ø      | Pushes all prefixes of the top element. |
-| ¡      | Computes the factorial.                |
 
 
-Summarized Table:
 
-!   Push the length of the stack
-@   Start function
-#   Start a comment
-$   Swap the top two items
-%   Pop x, y, push y % x
-^   Reverse the stack
-&   Store/Push a value in/from the register
-*   Pop x, y, push y * x
-()  For loop
-[]  If statement
-{}  While loop
-:   Duplicate top
-;   End function
-"   Right shift
-'   Left shift
-<   Less than
->   Greater than
-,   Print nice
-.   Print raw
-?   Take input
-/   Pop x, y, push y / x
-\   Escape next character
-~   Push random number (-inf, +inf)
--   Push x, y, push y - x
-_   Pop top of stack
-+   Push x, y, push y + x
-=   Equals
-a-Z Push character literal
-0-9 Push numeric literal
-`   Start normal string
-¬   Logical not
-≠   Not Equals
-≤   Less than or equal to
-≥   Greater than or equal to
-‹›  List
-°   Pop list, pos, push list[pos]
-•   Pop list, pos, val, list[pos] = val
-œ   Apply operator to all of stack
-£™  Map the expression to the top item iteratively
-ƒ™  Map the expression to the whole stack iteratively
-§™  Switch statement
-®   Set variable
-©   Get variable
-ß   Binary List
-⟨™  Zip map
-⸤   Min of zip Map
-⸢   Max of zip Map
-𐊗   Base ten
-𐊂   Base 2
-∑   Summate the stack
-∨   Max of the stack/item
-∧   Min of the stack/item
-∆   Increment
-▽   Decrement
-Ṙ   range(1, n + 1) [1, n]
-Ṛ   range(0, n + 1) [0, n]
-Ṟ   range(a, b) [a, b]
-ṙ   range(1, n) [1, n)
-ṛ   range(0, n) [0, n)
-ṟ   range(a, b) [a, b)
-⚁   mod 2
-⊡   space string
-″   empty string
-¢   map but keep original as input
-§   pairwise map
-Ω   print all
-²   square top
-𐊖   sort stack
-𐊜   uniquify
-⊐   wrap in List
-…   flatten
-ẕ   is integer
-ℤ   to integer
-¡   factorial
-ø   prefixes of t.o.s
-±   negate
-€   sub-sum a list
-ﬁ   filter a list
-⁄   loop variable
-˛   Empty string
-¯   Item in the list
-λ   Predefined constant
-𐊏  Loop variable
-⊕   Increment
-⊖   Decrement
+
+
+
 
