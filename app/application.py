@@ -32,7 +32,7 @@ ENV = 'dev'
 if ENV == 'dev' :
 	app.debug = True
 	#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
-	app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:root@localhost:5432/e_contest'
+	app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:root@localhost:5432/e-contest'
 else :
 	app.debug = False
 	app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://mszgdrmqiddjvp:1a9d8910173e936e5392a3e9593398505f81181e523cd0ddb5a2d0d9e340f84f@ec2-23-20-224-166.compute-1.amazonaws.com:5432/d7ljggvkk2q49e'
