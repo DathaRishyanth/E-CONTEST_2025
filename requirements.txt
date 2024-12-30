@@ -42,7 +42,7 @@ jupyter-server-mathjax==0.2.6
 jupyter_client==6.1.12
 jupyter_core==4.7.1
 jupyter_server==1.13.4
-jupyter_server_terminals==0.4.2
+# jupyter_server_terminals==0.4.2
 jupyterlab==3.1.18
 jupyterlab-git==0.35.0
 jupyterlab-pygments==0.1.2
@@ -62,7 +62,7 @@ notebook==6.4.6
 notebook_shim==0.1.0
 numpy==1.20.3
 packaging==21.0
-pandas==1.2.5
+pandas==1.1.5
 pandocfilters==1.5.0
 parso==0.8.1
 pexpect==4.8.0
