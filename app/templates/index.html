@@ -27,10 +27,10 @@ Contest Home Page
 <div class = "content">
 	<div id = "quick-link-left">
 		
-		<button class = "compiler"><a href = "https://tio.run/#keg" target = "_blank">Online Compiler</a></button>
-		
-		<button class = "standings"><a href = "{{url_for('standings')}}" target = "_blank">Standings</a></button>
-		<button class = "submissions"><a href = "{{url_for('submissions')}}">Submissions</a></button>
+		<button class="compiler" onclick="redirectToCompiler()">Online Compiler</button>
+		<button class="standings" onclick="redirectToStandings()">Standings</button>
+		<button class="submissions" onclick="redirectToSubmissions()">Submissions</button>
+
 	</div>
 
 	<div id="snackbar">

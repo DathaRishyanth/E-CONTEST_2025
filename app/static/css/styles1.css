@@ -308,6 +308,7 @@ option{
     margin-right: 175px;
     text-align: center;
     font-size: 1.5em;
+    cursor: pointer;
 }
 
 .compiler:hover{
@@ -325,6 +326,7 @@ option{
     margin-bottom: 30px;
     text-align: center;
     font-size: 1.5em;
+    cursor: pointer;
 }
 
 .standings:hover{
@@ -343,6 +345,7 @@ option{
     margin-left: 300px;
     text-align: center;
     font-size: 1.5em;
+    cursor: pointer;
 }
 
 .submissions:hover{

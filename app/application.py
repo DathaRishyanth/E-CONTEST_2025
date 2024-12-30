@@ -28,7 +28,7 @@ app.config['SESSION_TYPE'] = 'filesystem'
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=6)
 
 # ENV = 'PROD'
-ENV = 'dev'
+ENV = 'PROD'
 if ENV == 'dev' :
 	app.debug = True
 	#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
