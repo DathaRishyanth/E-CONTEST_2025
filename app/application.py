@@ -28,7 +28,7 @@ app.config['SESSION_TYPE'] = 'filesystem'
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=6)
 
 # ENV = 'PROD'
-ENV = 'PROD'
+ENV = 'dev'
 if ENV == 'dev' :
 	app.debug = True
 	#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
@@ -476,4 +476,5 @@ def submissions() :
 #     app.run(debug=True)
 
 if __name__ == '__main__':
-      app.run(host='0.0.0.0', port=8080,debug = True)
+      app.run(host='0.0.0.0', port=80)
+	
