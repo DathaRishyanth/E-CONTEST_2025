@@ -1,6 +1,7 @@
                                                     Let’s Get Common (GCD Edition)
 
-You are given two natural numbers A and B. Your task is to print the Greatest Common Divisor (GCD) of these two numbers.
+You are given two natural numbers A and B. Your task is to print the Greatest Common Divisor (GCD) of these 
+two numbers.
 
 CONSTRAINT:
 	1 ≤ A,B ≤ 10^3

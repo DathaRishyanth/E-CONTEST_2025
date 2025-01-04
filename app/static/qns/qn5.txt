@@ -1,6 +1,7 @@
                                                 Not All Primes Wear Capes
 
-Given a natural number(N), determine whether the number is prime or not. Output "1" if the given natural number is prime
+Given a natural number(N), determine whether the number is prime or not.
+Output "1" if the given natural number is prime
 else Output "0".
 
 

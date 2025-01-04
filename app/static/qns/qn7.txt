@@ -1,4 +1,4 @@
-                                                        Digitally Summed Up!
+                                                        THALA FOR A REASON!
 
 You are given a natural number N as input. Print "1" if the sum of the digits equals to 7, else print "0".
 
@@ -9,5 +9,5 @@ Example:
     INPUT   :   124
     OUTPUT  :   1
 
-    INPUT   :   2025
+    INPUT   :   26
     OUTPUT  :   0

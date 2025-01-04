@@ -1,6 +1,7 @@
                                                     FIBONACCI NUMBER
 
-Given an integer n, Print the nth Fibonacci number. 
+Given an integer N as Input, Print the Nth Fibonacci number. 
+
 
 CONSTRAINTS:
   1 ≤ N ≤ 10^3

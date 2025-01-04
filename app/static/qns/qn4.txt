@@ -1,16 +1,17 @@
                                                             EMORDNILAP?
 
-You are given a string S consisting of lowercase or uppercase English letters. Your task is to determine if the string is palindrome or not. 
+You are given a string S consisting of lowercase or uppercase English letters. 
+Your task is to determine if the string is palindrome or not. 
 A palindrome is a string that reads the same backward or forward.
 
 INPUT:
-A single string S, where S contains only letters and numbers and |S| is the length of the string. The string contains no whitespace characters.
+A single string S, where S contains only letters and numbers.
 
 OUTPUT:
 Print YES if the string is a palindrome, otherwise print NO.
 
 CONSTRAINT:
-    1 ≤ |S| ≤ 10^3
+    1 ≤ |S|(Length of the string) ≤ 10^3
 
 EXAMPLE:
     INPUT   :   rotator

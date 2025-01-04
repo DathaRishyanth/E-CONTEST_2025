@@ -1,9 +1,9 @@
-                                                    ASCII IN BINARY
+                                                    GOING BINARY
 
 You are given a natural number(N) as input. Print its 8-bit binary representation.
 
 CONSTRAINTS : 
-    1 ≤ N ≤ 10^3
+    1 ≤ N ≤ 255
 
 EXAMPLE :
     INPUT   :   16

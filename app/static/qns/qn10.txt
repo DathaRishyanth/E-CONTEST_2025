@@ -1,8 +1,12 @@
                                                 Behind Every Element: A Smaller Tale
                                                 
-You are given an array of integers(One element in each line). The array ends with the value -1, which should not be considered as part of 
-the array. For each element in the array, find the nearest element to its left that is smaller than the current 
-element. If no such element exists, print the element itself seperated by spaces.
+You are given an array of integers(One element in each line). The array ends with the value -1, 
+which should not be considered as part of the array. For each element in the array, find the nearest element 
+to its left that is smaller than the current element. If no such element exists, print the element itself.
+
+NOTE:
+The elements should be printed with whitespaces in between them and there should be no whitespaces at the
+beginning or the end of the output.
 
 CONSTRAINTS:
     i)  1 ​≤ N ​≤ 10^3 , Where N is the size of the array

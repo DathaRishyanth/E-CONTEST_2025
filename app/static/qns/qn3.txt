@@ -1,8 +1,8 @@
-                                                        MEAN LEN SQAURED
+                                                    ASCII Art of Arithmetic    
 
 
-You are given a string S consisting of uppercase or lowercase English letters. Your task is to calculate and print the mean of the ASCII values of the characters in the string.
-The mean is defined as the sum of ASCII values of all characters in the string divided by the number of characters.
+You are given a string S consisting of uppercase or lowercase English letters. 
+Print the sum of ascii values of the letters multiplied by the length of the string.
 
 Input:
 A single string S , where ∣S∣ is the length of the string.
