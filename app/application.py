@@ -32,10 +32,10 @@ ENV = 'PROD'
 if ENV == 'dev' :
 	app.debug = True
 	#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
-	app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:root@localhost:5432/e-contest'
+	app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://u5rgu0bcm967qv:p8bd433fc6f1e79e1c8629c193f4a869d0f5c720775cd0be463a0df3b43c7a3a8@ec2-52-87-33-13.compute-1.amazonaws.com:5432/de89rk8ro7fac6'
 else :
 	app.debug = False
-	app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://u5rgu0bcm967qv:p8bd433fc6f1e79e1c8629c193f4a869d0f5c720775cd0be463a0df3b43c7a3a8@ec2-52-87-33-13.compute-1.amazonaws.com:5432/de89rk8ro7fac6'
+	app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://u5rgu0bcm967qv:p8bd433fc6f1e79e1c8629c193f4a869d0f5c720775cd0be463a0df3b43c7a3a8@ec2-52-87-33-13.compute-1.amazonaws.com:5432/de89rk8ro7fac6'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -128,10 +128,10 @@ pno = 0
 IST = pytz.timezone('Asia/Kolkata')
 utc = pytz.utc
 
-#14tth dec 2024 11 am
-startTime = datetime(2024,12,14,11,0,0)
-#14th dec 2024 3 pm
-endTime = datetime(2025,12,14,15,0,0)
+#6th Jan 2025 9 am
+startTime = datetime(2025,1,6,9,0,0)
+#6th Jan 2025 12 pm
+endTime = datetime(2025,1,6,12,0,0)
 
 startTime = utc.localize(startTime).astimezone(IST)
 endTime = utc.localize(endTime).astimezone(IST)
@@ -470,10 +470,10 @@ def submissions() :
 
 	return render_template('submissions.html',name = session['username'],submissions = subs,to_time = time.strftime,to_ttuple = time.gmtime)
 
-# if __name__ == "__main__":
-#     with app.app_context():
-#         db.create_all()
-#     app.run(debug=True)
+if __name__ == "__main__":
+    with app.app_context():
+        db.create_all()
+    app.run(debug=True)
 
-if __name__ == '__main__':
-      app.run(host='0.0.0.0', port=8080)
+# if __name__ == '__main__':
+#       app.run(host='0.0.0.0', port=8080)
