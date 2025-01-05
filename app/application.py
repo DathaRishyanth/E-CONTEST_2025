@@ -35,7 +35,7 @@ if ENV == 'dev' :
 	app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:root@localhost:5432/e-contest'
 else :
 	app.debug = False
-	app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://e-contest_owner:ztsolJ04hmCD@ep-aged-river-a8iiw819.eastus2.azure.neon.tech/e-contest?sslmode=require'
+	app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://u5rgu0bcm967qv:p8bd433fc6f1e79e1c8629c193f4a869d0f5c720775cd0be463a0df3b43c7a3a8@ec2-52-87-33-13.compute-1.amazonaws.com:5432/de89rk8ro7fac6'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)

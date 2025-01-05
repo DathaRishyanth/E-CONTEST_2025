@@ -17,13 +17,14 @@ enabling operations like A + D, as they operate on the ASCII values of the chara
 ---
 Basic Operations
 
-note:-
-1)make sure to not leave any white spaces in the code as these are pushed into the stack as its ascii value 
-2)boolean values can be evaluated by if-else block and the while loop
+Note:-
+1) Make sure to not leave any white spaces in the code as these are pushed into the stack as its ascii value 
+2) Boolean values can be evaluated by if-else block and the while loop
+3) All the special characters needed for you program should be copy pasted from the syntax sheet
 
-consider a stack of 2 elements with element x at the top and y at the bottom 
-example code and explanation :- 23+ first pushes 2 to the stack then 3 is pushed on top of the stack( x = 3 and y = 2) and then 2 and 3 are popped out and 5 is placed at the top 
-of the stack
+Consider a stack of 2 elements with element x at the top and y at the bottom 
+example code and explanation :- 23+ first pushes 2 to the stack then 3 is pushed on top of the stack( x = 3 and y = 2) and then 2 and 3 are 
+popped out and 5 is placed at the top of the stack
 
 | Operator | Description                                                                                      | Example               |
 |          |                                                                                                  | y x operator → output |
@@ -39,61 +40,90 @@ of the stack
 ---
 
 Stack Manipulation
-top of the stack is towards the left [1,2,3] here 1 is at the top 
+
+code to initialise a stack containig 1 , 2 and 3 with 1 at the top 
+code:-321
+explanation:-first 3 is pushed into the stack and is at the bottom, then 2 is pused and then 1 is pushed and is at the top
+
+NOTE:-here [,,] is used just as a representation of a stack and is not the proper syntax of the program 
+
+Top of the stack is towards the left [1,2,3] here 1 is at the top  
+
+
+
 | Operator | Description                                                        | Example            |
 |----------|--------------------------------------------------------------------|--------------------|
 |   :      | Duplicates the top stack element.                                  | [5] : → [5, 5]     |
-|    $     | Swaps the top two elements.                                        | [1,2] $ → [2, 1]   |
+|   $      | Swaps the top two elements.                                        | [1,2] $ → [2, 1]   |
 |   "      | Right shifts the stack (Put the top of the stack to the bottom)    | [1,2,3] → [2,3,1]  |
-|   '      | Left shifts the stack (Put the bottom of the stack to the top)     | [1,2,3] → [3,2,1]  |
-|   !      | Pushes the length of the stack onto the stack                      | [1,2,9] → [3,1,2,9]| # length of the stack is 3
+|   '      | Left shifts the stack (Put the bottom of the stack to the top)     | [1,2,3] → [3,1,2]  |
+|   !      | Pushes the length of the stack onto the stack                      | [1,2,9] → [3,1,2,9]| 
 |   ^      | Reverses the stack                                                 | [1,2,3] → [3,2,1]  |
-|   ;      | Decrements the top of the stack                                    |                    |
+|   ;      | Decrements the top of the stack                                    | [1,2,3] → [0,2,3]  |
+|   _      | Pops the topmost element of the stack(Doesn't print)               | [1,2,3] → [2,3]    |
+
 ---
 
 Input/Output
 
-1)when HELLO is added to the stack, each character is pushed into the stack one by one and the length of the stack is 5 and not 1
-2)? or ¿ preserves the order of input ie if the input taken by ? is HELLO, H is at the top of the stack but when you add HELLO manually in the code
-O is the top of the stack
+1) When HELLO is added to the stack, each character is pushed into the stack one by one and the length of the stack is 5 and not 1
+2) ? or ¿ preserves the order of input, 
+    For example, If input = "HELLO", then the following code prints H as it is at the top of the stack. 
+    example code:-?,
 
-| Operator | Description                                  | Example                                                   |
-|----------|----------------------------------------------|-----------------------------------------------------------|
-| .        | Prints the top stack element (int or float). | . on stack [a,b,3] → Prints ascii value of a              |
-| ,        | Prints the top stack element (char).         | , on stack [1,2,3] → Prints A                             |
-| ?        | Reads the input as charecters and pushes to the stack | If input is "Hello", ? . → Prints Hello. not olleH|
-| ¿        | Reads an integer from input and pushes it.   | If input is 42, ¿ . → Prints 42.                          |
+    The following code prints O and not H
+    examle code:-HELLO, 
+
+
+| Operator | Description                                           | Example                                                        |
+|----------|-------------------------------------------------------|----------------------------------------------------------------|
+| .        | Pops and prints the top stack element (int or float). | . on stack [A,b,3] → Prints 65 which is the ascii value of A   |              |
+| ,        | Pops and prints the top stack element (char).         | , on stack [A,2,3] → Prints A and not 65(ascii of A)           |                   
+| ?        | Reads the input as characters and pushes to the stack | If input is "Hello", ?→ pushes Hello into the stack, not olleH |
+| ¿        | Reads an integer from input and pushes it.            | If input is 42, ¿. →  ¿ takes the input and . prints 42        |
+| _        | Removes the last item on the stack and dosn't print it|
 
 ---
 
 Control Flow (IF-ELSE Block)
-The program enters into the if condition is the top of the stack is nonzero (any number or charecter other than zero ) and else block 
+
+The program enters into the if condition if the top of the stack is nonzero (any number or character other than zero ) and else block 
 if the top of the stack is zero.
 
-| Syntax     | Description                                              | Example                                                         |
-|------------|----------------------------------------------------------|-----------------------------------------------------------------|
-| [...]      | Executes the block if the top element is truthy.         | input:-5, code:-?[1.] → Prints 1 as top of the stack is non zero|                                           |
-| ?[...|...] | If truthy, executes first block; else, the second block. | input:-0, code:-?[1.|2.] → Prints 2 (else case)                 | 
+| Syntax     | Description                                              | Example                                                            |
+|------------|----------------------------------------------------------|--------------------------------------------------------------------|
+| [...]      | Executes the block if the top element is truthy.         | input:-5, code:-?[1.] → Prints 1 as top of the stack(5) is non zero|                                           |
+| [...|...]  | If truthy, executes first block; else, the second block. | input:-0, code:-?[1.|2.] → Prints 2 (else case)                    | 
 
 example code:-¿2%1=[ddo,,,|neve,,,,]
 explanation:- 
 1)here ¿ takes an integer input say x, then 2 is added on top of the stack
 2)% operator evaluates x%2 and pushes the result onto the stack, 
-3)1 is added to the top of the stack , = operatator adds the result of x%2==1 to the top of the stack, if it evaluates to True(1) then "odd" 
-is printed ( d is pused into the stack first and printed out last, as stack is FILO ). If it evaluates False(0) then "even" is printed 
-code to print "Buzz" :- zzuB(4|,) here 4 charecters are put into the stack and a for loop is run to print "Buzz"
-                           
+3)1 is added to the top of the stack , 
+4)= operatator adds the result of x%2==1 to the top of the stack, if it evaluates to True(1) then "odd" 
+is printed ( d is pushed into the stack first and printed out last, as stack is FILO ). If it evaluates False(0) then "even" is printed.
+
+NOTE:- if your stack is [1,8] and you pass this to a if else block, as the top of the stack is 1 the program enters into the if condition . 
+But while doing so the top of the stacked is popped 
+
 
 Loops
 1) for loop 
 syntax:- (∆...1|∆ ...2)
-When a for loop is run, if ∆...1 is present, it will be evaluated as used as the number of times the loop will be run 
+When a for loop is run, if ∆...1 is present, it will be evaluated and used as the number of times the loop will be run 
 (if it isn’t given, the element at the top of the stack will be used). ∆...2 is the body of the for loop, which will be executed.
+∆...1 is just a placeholder for a block of code and not the actual syntax of the language 
 
 For Loop Example:-Print "Hi" 3 times: 3(|iH ,,,) or (3|iH ,,,)
 
 # Output: Hi Hi Hi
 in the first code 3(|iH ,,,) 3 which is at the top of the stack is used as the condition for the loop 
+in the second code 3 is given as the argument to the loop to run that many times 
+
+Example code to print "Buzz" :- zzuB(4|,) here 4 charecters are put into the stack and a for loop is run to print "Buzz" using ,
+
+Code to empty the stack-(_) this for loop runs till the whole stack is empty and prints the elements of the stack as characters
+
 ---
 2) while Loops
 syntax:- { ∆...1|∆ ...2}
@@ -115,8 +145,6 @@ Repeat Until n=0: Continue pushing, multiplying, returning, and decrementing unt
 Result: The product variable contains the factorial n! when the loop ends.
 
 
-
-
 Examples
 Factorial
 1¿:(|:"*'1-)$.
@@ -133,12 +161,10 @@ untill we get the factorial
 SUMMARISED FOR YOU:
 
 !   Push the length of the stack
-@   Start function
 #   Start a comment
 $   Swap the top two items
 %   Pop x, y, push y % x
 ^   Reverse the stack
-&   Store/Push a value in/from the register
 *   Pop x, y, push y * x
 ()  For loop
 []  If statement
@@ -153,70 +179,21 @@ $   Swap the top two items
 .   Print raw
 ?   Take input
 /   Pop x, y, push y / x
-\   Escape next character
-~   Push random number (-inf, +inf)
 -   Push x, y, push y - x
 _   Pop top of stack
 +   Push x, y, push y + x
 =   Equals
 a-Z Push character literal
 0-9 Push numeric literal
-`   Start normal string
 ¬   Logical not
 ≠   Not Equals
 ≤   Less than or equal to
 ≥   Greater than or equal to
-‹›  List
-°   Pop list, pos, push list[pos]
-•   Pop list, pos, val, list[pos] = val
-œ   Apply operator to all of stack
-£™  Map the expression to the top item iteratively
-ƒ™  Map the expression to the whole stack iteratively
-§™  Switch statement
-®   Set variable
-©   Get variable
-ß   Binary List
-⟨™  Zip map
-⸤   Min of zip Map
-⸢   Max of zip Map
-𐊗   Base ten
-𐊂   Base 2
-∑   Summate the stack
-∨   Max of the stack/item
-∧   Min of the stack/item
-∆   Increment
-▽   Decrement
-Ṙ   range(1, n + 1) [1, n]
-Ṛ   range(0, n + 1) [0, n]
-Ṟ   range(a, b) [a, b]
-ṙ   range(1, n) [1, n)
-ṛ   range(0, n) [0, n)
-ṟ   range(a, b) [a, b)
-⚁   mod 2
-⊡   space string
-″   empty string
-¢   map but keep original as input
-§   pairwise map
-Ω   print all
-²   square top
-𐊖   sort stack
-𐊜   uniquify
-⊐   wrap in List
-…   flatten
 ẕ   is integer
 ℤ   to integer
-¡   factorial
-ø   prefixes of t.o.s
-±   negate
-€   sub-sum a list
-ﬁ   filter a list
-⁄   loop variable
-˛   Empty string
-¯   Item in the list
-λ   Predefined constant
-𐊏  Loop variable
-⊕   Increment
-⊖   Decrement
+
+
+
 
 
 
