@@ -16,7 +16,7 @@ Contest Home Page
 {% block top_part %}
 <h1>E-CONTEST</h1>
 <form id = "complete_test" name = "complete_test" method = "POST" action = "{{url_for('dashboard')}}">
-	<input type = "hidden" name = "remTime" id = "remTime" value = "{{rem_time}}">
+	<!-- <input type = "hidden" name = "remTime" id = "remTime" value = "{{rem_time}}"> -->
 	<input name = "quit" type = "submit" value = "Complete Test" id = "quit" onclick = "confirmSubmit(event);">
 </form>
 <!-- <div id = "timer">Timer
