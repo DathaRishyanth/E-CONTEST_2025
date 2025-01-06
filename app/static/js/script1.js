@@ -37,7 +37,7 @@ function timeformat(ts) {
 	let min = (~~tmp) % 60;
 	tmp = ~~(tmp / 60);
 	let hr = (~~tmp) % 60; 
-	return pad(hr) + ' :: ' + pad(min) + ' :: ' + pad(sec);
+	return '00' + ' :: ' + '00' + ' :: ' + '00';
 }
 
 function pad(d) {
