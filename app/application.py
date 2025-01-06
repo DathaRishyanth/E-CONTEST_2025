@@ -128,10 +128,10 @@ pno = 0
 IST = pytz.timezone('Asia/Kolkata')
 utc = pytz.utc
 
-#6th Jan 2025 9 am
-startTime = datetime(2025,1,6,9,0,0)
+#6th Jan 2025 3:30 am
+startTime = datetime(2025,1,6,3,30,0)
 #6th Jan 2025 12 pm
-endTime = datetime(2025,1,6,12,0,0)
+endTime = datetime(2025,1,6,6,0,0)
 
 startTime = utc.localize(startTime).astimezone(IST)
 endTime = utc.localize(endTime).astimezone(IST)
