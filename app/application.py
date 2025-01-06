@@ -128,9 +128,9 @@ pno = 0
 IST = pytz.timezone('Asia/Kolkata')
 utc = pytz.utc
 
-#6th Jan 2025 3:30 am
+
 startTime = datetime(2025,1,6,9,0,0)
-#6th Jan 2025 12 pm
+
 endTime = datetime(2025,1,6,11,30,0)
 
 startTime = utc.localize(startTime).astimezone(IST)
@@ -470,10 +470,10 @@ def submissions() :
 
 	return render_template('submissions.html',name = session['username'],submissions = subs,to_time = time.strftime,to_ttuple = time.gmtime)
 
-if __name__ == "__main__":
-    with app.app_context():
-        db.create_all()
-    app.run(debug=True)
+# if __name__ == "__main__":
+#     with app.app_context():
+#         db.create_all()
+#     app.run(debug=True)
 
-# if __name__ == '__main__':
-#       app.run(host='0.0.0.0', port=8080)
+if __name__ == '__main__':
+      app.run(host='0.0.0.0', port=8080)
