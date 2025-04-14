@@ -129,9 +129,9 @@ IST = pytz.timezone('Asia/Kolkata')
 utc = pytz.utc
 
 
-startTime = datetime(2025,1,6,9,0,0)
+startTime = datetime(2025,1,6,3,30,0)
 
-endTime = datetime(2025,1,6,11,30,0)
+endTime = datetime(2025,1,6,6,0,0)
 
 startTime = utc.localize(startTime).astimezone(IST)
 endTime = utc.localize(endTime).astimezone(IST)

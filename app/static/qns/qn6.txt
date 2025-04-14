@@ -9,7 +9,7 @@ CONSTRAINT:
 EXAMPLE:
 	INPUT    :    4
 				  10
-	OUTPUT   :    2
+OUTPUT   :    2
 
 	INPUT    :    7
 				  9

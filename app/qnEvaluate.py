@@ -20,7 +20,7 @@ def score(code, qn_no, pno):
         if 'tc' in filename:
             fno = re.sub('[^0-9]+', '', filename)
             # outputfilePath = './E-Contest/app/evaluation/output' + pno + '.txt'
-            outputfilePath = f'./evaluation/output{int(pno) % 3}.txt'
+            outputfilePath = f'./evaluation/output{int(pno)}.txt'
 
             # Check if the output directory exists
             print(outputfilePath)
