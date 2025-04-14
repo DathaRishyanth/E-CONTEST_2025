@@ -32,10 +32,10 @@ ENV = 'PROD'
 if ENV == 'dev' :
 	app.debug = True
 	#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
-	app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://u5rgu0bcm967qv:p8bd433fc6f1e79e1c8629c193f4a869d0f5c720775cd0be463a0df3b43c7a3a8@ec2-52-87-33-13.compute-1.amazonaws.com:5432/de89rk8ro7fac6'
+	app.config['SQLALCHEMY_DATABASE_URI'] = 'DataBase_URL'
 else :
 	app.debug = False
-	app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://u5rgu0bcm967qv:p8bd433fc6f1e79e1c8629c193f4a869d0f5c720775cd0be463a0df3b43c7a3a8@ec2-52-87-33-13.compute-1.amazonaws.com:5432/de89rk8ro7fac6'
+	app.config['SQLALCHEMY_DATABASE_URI'] = 'DataBase_URL'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
